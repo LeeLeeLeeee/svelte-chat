@@ -1,1 +1,5 @@
-안녕하세요
+<script>
+	import Header from '$components/common/header';
+</script>
+
+<Header />
