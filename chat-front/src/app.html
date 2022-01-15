@@ -7,7 +7,16 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		%svelte.head%
 	</head>
-	<body>
-		<div id="svelte">%svelte.body%</div>
+	<style>
+		html, body, #svelte {
+			height: 100%;
+		}
+		@font-face {
+			font-family: 'noto-sans';
+			src: url("%svelte.assets%/font/NotoSerifKR-Regular.otf");
+		}
+	</style>
+	<body class="bg-slate-100">
+		<div id="svelte" class="pb-2 pt-2">%svelte.body%</div>
 	</body>
 </html>
