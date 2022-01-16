@@ -1,7 +1,7 @@
 import { writable } from 'svelte/store';
 
 export const userStore = writable({
-	username: ''
+	username: '이영현'
 });
 
 export const setUserName = (name) => {

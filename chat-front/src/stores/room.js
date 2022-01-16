@@ -1,55 +1,71 @@
 import { writable } from 'svelte/store';
+import { v4 as uuidv4 } from 'uuid';
 
 export const roomStore = writable({
-	roomList: [{roomId: 'a', userList: ['a', 'b', 'c']}, {roomId: 'b', userList: ['a']}]
+	roomList: []
 });
 
-
 const setUserToRoom = (room, userName) => {
-	if(!room.userList.includes(userName)) {
-        room.userList.push(userName)
-    }
+	if (!room.userList.includes(userName)) {
+		room.userList.push(userName);
+	}
 };
 
 const deleteUserFromRoom = (room, userName) => {
-    if(room.userList.includes(userName)) {
-        room.userList = room.userList.filter((name) => userName !== name);
-    }
-}
-
-const findRoom = (roomList, roomId) => {
-    for (const room of roomList) {
-        if (roomId !== room.id) continue;
-        return room;
-    }
-    throw new Error('not found');
-}
-
-export const createRoom = (roomId) => {
-	roomStore.update((state) => ({
-		roomList: [...state.roomList, { id: roomId, userList: [] }]
-	}));
+	if (room.userList.includes(userName)) {
+		room.userList = room.userList.filter((name) => userName !== name);
+	}
 };
 
-export const enterRoom = (roomId, userName) => {
+const findRoom = (roomList, roomName) => {
+	for (const room of roomList) {
+		if (roomName !== room.roomName) continue;
+		return room;
+	}
+	throw new Error('not found');
+};
+
+export const createRoom = (roomName, username) => {
+	const roomId = uuidv4();
+
 	roomStore.update((state) => {
-        try {
-            const room = findRoom(state.roomList, roomId);
-            setUserToRoom(room, userName);
-        } finally {
-            return { ...state };
-        }
-		
+		try {
+			findRoom(state.roomList, roomName);
+		} catch (error) {
+			state.roomList.push({
+				roomId,
+				roomName,
+				userList: [username]
+			});
+		}
+		return { ...state };
 	});
 };
 
-export const exitRoom = (roomId, userName) => {
-    roomStore.update((state) => {
-        try {
-            const room = findRoom(state.roomList, roomId);
-            deleteUserFromRoom(room, userName);
-        } finally {
-            return { ...state };
-        }
-    })
+export const enterRoom = (roomName, userName) => {
+	roomStore.update((state) => {
+		try {
+			const room = findRoom(state.roomList, roomName);
+			setUserToRoom(room, userName);
+		} finally {
+			return { ...state };
+		}
+	});
+};
+
+export const exitRoom = (roomName, userName) => {
+	roomStore.update((state) => {
+		try {
+			const room = findRoom(state.roomList, roomName);
+			deleteUserFromRoom(room, userName);
+		} finally {
+			return { ...state };
+		}
+	});
+};
+
+export const deleteRoom = (roomName) => {
+	roomStore.update((state) => ({
+		roomList: state.roomList.filter((room) => room.roomName !== roomName)
+	}));
 };
