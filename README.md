@@ -23,5 +23,20 @@ redis를 pub-sub 기능을 활용하여 채팅방 토이 프로젝트 구축. �
 - tailwind css
 
 
+### Directory
+#### front - svelt
+```bash
+├── src
+│   ├── components # 컴포넌트 요소
+│   │   ├── chat # chat 페이지에서 사용되는 component
+│   │   ├── home # home 페이지에서 사용되는 component
+│   │   ├── common # 공통 component
+│   │   │   ├── modal
+│   ├── pages # route와 매치되는 요소
+│   ├── stores # svelte store
+├── static # 정적 파일
+```
+
+
 
 
