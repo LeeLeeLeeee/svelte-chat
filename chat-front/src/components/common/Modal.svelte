@@ -13,19 +13,19 @@
 </script>
 
 <div
-	id='container'
+	id="container"
 	class=" absolute border1 z-20 border-slate-700 shadow-md bg-white p-2 rounded-md {isModal
 		? 'flex'
 		: 'hidden'}"
 >
 	<div class="header border-b border-b-slate-200">
-		<slot name='header'/>
+		<slot name="header" />
 	</div>
 	<div class="content">
-		<slot></slot>
+		<slot />
 	</div>
 	<div class="bottom">
-		<slot name='bottom'/>
+		<slot name="bottom" />
 	</div>
 </div>
 
@@ -42,7 +42,6 @@
 	}
 
 	div > .header {
-
 	}
 
 	div > .content {

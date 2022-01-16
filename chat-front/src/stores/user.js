@@ -1,12 +1,12 @@
-import { writable } from "svelte/store";
+import { writable } from 'svelte/store';
 
 export const userStore = writable({
-    username: '',
-})
+	username: ''
+});
 
 export const setUserName = (name) => {
-    if(name === '') {
-        throw new Error('isBlank');
-    }
-    userStore.update((state) => ({ ...state, username: name }));
-}
+	if (name === '') {
+		throw new Error('isBlank');
+	}
+	userStore.update((state) => ({ ...state, username: name }));
+};

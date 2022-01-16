@@ -3,7 +3,7 @@
 	import { modalStore, setModalClose } from '$stores/modal';
 </script>
 
-<div class="w-4/12 p-1 mx-auto h-full drop-shadow-md rounded-sm bg-white">
+<div class="w-4/12 mx-auto h-full drop-shadow-md rounded-sm bg-white">
 	<slot />
 </div>
 
