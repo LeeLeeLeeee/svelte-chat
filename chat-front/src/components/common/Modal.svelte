@@ -1,6 +1,7 @@
 <script>
 	import { modalStore } from '$stores/modal';
 	import { onDestroy } from 'svelte';
+	import { fade } from 'svelte/transition';
 
 	export let modalId = '';
 	let isModal = false;
@@ -12,22 +13,24 @@
 	});
 </script>
 
-<div
-	id="container"
-	class=" absolute border1 z-20 border-slate-700 shadow-md bg-white p-2 rounded-md {isModal
-		? 'flex'
-		: 'hidden'}"
->
-	<div class="header border-b border-b-slate-200">
-		<slot name="header" />
+{#if isModal}
+	<div
+		id="container"
+		in:fade
+		out:fade={{ duration: 150 }}
+		class="absolute border1 z-20 border-slate-700 shadow-md bg-white p-2 rounded-md flex"
+	>
+		<div class="header border-b border-b-slate-200">
+			<slot name="header" />
+		</div>
+		<div class="content">
+			<slot />
+		</div>
+		<div class="bottom">
+			<slot name="bottom" />
+		</div>
 	</div>
-	<div class="content">
-		<slot />
-	</div>
-	<div class="bottom">
-		<slot name="bottom" />
-	</div>
-</div>
+{/if}
 
 <style>
 	div#container {

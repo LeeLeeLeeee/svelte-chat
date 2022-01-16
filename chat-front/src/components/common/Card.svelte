@@ -1,7 +1,14 @@
 <script>
-    export let title = '';
+	export let title = '';
+	import { slide } from '$animations/slide';
 </script>
-<div id='card' class={`
+
+<div
+	on:click
+	in:slide
+	out:slide
+	id="card"
+	class={`
     border
     inline-flex
     pb-1 pt-1 pl-2 pr-2
@@ -16,13 +23,15 @@
     justify-center
     flex-col
     relative
-`}>
-    <div class='text-left w-full flex-1'>{title}</div>
-    <slot name='content'></slot>
+`}
+>
+	<div class="text-left w-full flex-1">{title}</div>
+	<slot name="content" />
 </div>
+
 <style>
-    #card {
-        width: 288px;
-        height: 90px;
-    }
+	#card {
+		width: 288px;
+		height: 110px;
+	}
 </style>

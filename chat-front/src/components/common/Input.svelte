@@ -5,7 +5,7 @@
 	export let error = false;
 </script>
 
-<div class="flex flex-col">
+<div class="flex flex-col flex-1">
 	<div>
 		<span class="empty:hidden text-gray-600">{label}</span>
 		{#if error}
