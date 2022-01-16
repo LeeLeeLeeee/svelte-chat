@@ -16,7 +16,7 @@ redis를 pub-sub 기능을 활용하여 채팅방 토이 프로젝트 구축. �
 - gorilla/websocket (소켓 통신)
 - redigo (레디스 관리)
 #### devops
-- docker
+- docker, docker-compose
 #### test
 - jest
 #### design
