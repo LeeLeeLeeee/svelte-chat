@@ -15,7 +15,8 @@ const config = {
 			resolve: {
 				alias: {
 					$components: resolve('./src/components'),
-					$stores: resolve('./src/stores')
+					$stores: resolve('./src/stores'),
+					$animations: resolve('./src/animations'),
 				},
 				extensions: ['.svelte', '.js']
 			}
