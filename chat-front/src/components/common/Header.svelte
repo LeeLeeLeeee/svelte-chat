@@ -19,7 +19,7 @@
 	const handleClick = ({ detail }) => {
 		const { roomId } = detail;
 		goto(`chat/${roomId}`);
-	}
+	};
 </script>
 
 <div class="p-2 shadow-sm z-10 relative flex justify-between">

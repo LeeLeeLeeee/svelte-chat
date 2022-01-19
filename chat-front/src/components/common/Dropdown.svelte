@@ -12,7 +12,7 @@
 	const dispatch = createEventDispatcher();
 
 	function handleClick(roomId) {
-		dispatch('listItemClick', { roomId })
+		dispatch('listItemClick', { roomId });
 	}
 
 	function closeDropDownItem(event) {
@@ -44,7 +44,9 @@
 			class="drop-down-list absolute text-xs drop-shadow-md bg-white p-2 rounded-md border border-gray-300"
 		>
 			{#each list as item (item[listItemKey.id])}
-				<li on:click={()=> handleClick(item[listItemKey.id])}>{item[listItemKey.label]}</li>
+				<li on:click={() => handleClick(item[listItemKey.id])}>
+					{item[listItemKey.label]}
+				</li>
 			{/each}
 		</ul>
 	{/if}
