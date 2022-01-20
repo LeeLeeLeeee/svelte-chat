@@ -6,19 +6,25 @@ redis를 pub-sub 기능을 활용하여 채팅방 토이 프로젝트 구축. �
 
 ### 기술 스택
 #### front
-- javascript
 - svelte
 - svelte-kit
 - socket.io
+
 #### back
 - go
 - echo (서버 구축)
 - gorilla/websocket (소켓 통신)
 - redigo (레디스 관리)
+
 #### devops
-- docker, docker-compose
+- docker
+- docker-compose
+- traefik
+
 #### test
 - jest
+- cypress
+
 #### design
 - tailwind css
 
