@@ -16,9 +16,19 @@ const config = {
 				alias: {
 					$components: resolve('./src/components'),
 					$stores: resolve('./src/stores'),
-					$animations: resolve('./src/animations')
+					$animations: resolve('./src/animations'),
+					$lib: resolve('./src/lib'),
 				},
 				extensions: ['.svelte', '.js']
+			},
+			server: {
+				proxy: {
+					'/ws': {
+						target: 'ws://localhost:19123',
+						ws: true,
+						changeOrigin: true,
+					}
+				}
 			}
 		}
 	}

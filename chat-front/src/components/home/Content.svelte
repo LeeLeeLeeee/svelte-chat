@@ -2,10 +2,16 @@
 	import { userStore } from '$stores/user';
 	import { roomStore, deleteRoom } from '$stores/room';
 	import Card from '$components/common/Card';
+	import serverProxy from '$lib/server-proxy';
+	import SocketClient from '$lib/socket';
+	
 	$: enterAbleRoomList = $roomStore.roomList; //.filter((room) => !room.userList.includes($userStore.username));
 
+	let sc
 	const handleCardClick = (roomName) => {
-		deleteRoom(roomName);
+		sc = new SocketClient($userStore.username, roomName);
+		sc.connect()
+		// serverProxy.connectRoom($userStore.username, roomName);
 	};
 </script>
 

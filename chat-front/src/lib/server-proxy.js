@@ -1,16 +1,18 @@
-import { io } from 'socket.io-client';
-
-class SocketClient {
-    constructor(name, room) {
-        const URL = `http://192.168.4.73:19123/${room}`
-        this.socket = io(URL, { authConnect: false});
-        this.socket.onAny((event, ...args) => {
-            console.log(event, args);
-        })
-        this.socket.auth = name;
+import axios from 'axios';
+class ServerProxy {
+    constructor() {
+        axios.defaults.baseURL = "/api/v1";
+        axios.defaults.headers.common['Content-Type'] = 'application/json'
     }
 
-    connect() {
-        this.socket.connect();
+    async connectRoom(name, roomName) {
+        try {
+            const data = await axios.post('/connect', { name, roomName })
+        } catch(error) {
+            console.log(error);
+        }
     }
 }
+
+const serverProxy = new ServerProxy();
+export default serverProxy;

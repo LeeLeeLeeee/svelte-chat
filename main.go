@@ -17,6 +17,10 @@ var (
 		ReadBufferSize:    1024,
 		WriteBufferSize:   1024,
 		EnableCompression: false,
+		CheckOrigin: func(r *http.Request) bool {
+			myLogger.Println(r)
+			return true
+		},
 	}
 	myLogger = log.New(os.Stdout, "INFO: ", log.LstdFlags)
 )
@@ -33,11 +37,16 @@ type clientInfo struct {
 	RoomName   string
 }
 
+type userInfo struct {
+	Name     string `json:"name"`
+	RoomName string `json:"roomName"`
+}
+
 func main() {
 
 	r := echo.New()
 	r.Use(middleware.Logger())
-	r.POST("/connect", connectClient)
+	r.GET("/ws", connectClient)
 	server := &http.Server{
 		Handler:      r,
 		ReadTimeout:  10 * time.Second,
@@ -49,9 +58,14 @@ func main() {
 }
 
 func connectClient(c echo.Context) error {
-	username := c.QueryParam("name")
-	chatRoom := c.QueryParam("roomName")
-	if username == "" || chatRoom == "" {
+	u := new(userInfo)
+	if err := c.Bind(u); err != nil {
+		return c.JSON(500, responseFormat{
+			StatusCode: 500,
+			Message:    "Failed to bind",
+		})
+	}
+	if u.Name == "" || u.RoomName == "" {
 		return c.JSON(400, responseFormat{
 			StatusCode: 400,
 			Message:    "name and roomName must have a vlaue.",
@@ -59,7 +73,7 @@ func connectClient(c echo.Context) error {
 	}
 	conn, err := upgrader.Upgrade(c.Response(), c.Request(), nil)
 	if err != nil {
-		myLogger.Println(err)
+		fmt.Println(err)
 		return c.JSON(500, responseFormat{
 			StatusCode: 500,
 			Message:    "Failed to create connection",
@@ -67,8 +81,8 @@ func connectClient(c echo.Context) error {
 	}
 	client := &clientInfo{
 		Conn:       conn,
-		ClientName: username,
-		RoomName:   chatRoom,
+		ClientName: u.Name,
+		RoomName:   u.RoomName,
 	}
 
 	go client.Start()
