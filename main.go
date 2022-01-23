@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"net/http"
 	"time"
@@ -20,7 +21,8 @@ type userInfo struct {
 }
 
 var (
-	hub = newHub()
+	hub  = newHub()
+	addr = flag.String("addr", ":19123", "http service address")
 )
 
 func main() {
@@ -32,37 +34,37 @@ func main() {
 		Handler:      r,
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
-		Addr:         ":19123",
+		Addr:         *addr,
 	}
-	fmt.Println("localhost:19123 server on")
+	fmt.Printf("localhost: %s server on\n", *addr)
 	panic(server.ListenAndServe())
 }
 
 func connectClient(c echo.Context) error {
 	u := new(userInfo)
 	if err := c.Bind(u); err != nil {
-		return c.JSON(500, responseFormat{
-			StatusCode: 500,
+		return c.JSON(http.StatusInternalServerError, responseFormat{
+			StatusCode: http.StatusInternalServerError,
 			Message:    "Failed to bind",
 		})
 	}
 	if u.Name == "" {
-		return c.JSON(400, responseFormat{
-			StatusCode: 400,
+		return c.JSON(http.StatusBadRequest, responseFormat{
+			StatusCode: http.StatusBadRequest,
 			Message:    "name and roomName must have a vlaue.",
 		})
 	}
 	err := connectWs(hub, c.Response(), c.Request())
 
 	if err != nil {
-		return c.JSON(500, responseFormat{
-			StatusCode: 500,
+		return c.JSON(http.StatusInternalServerError, responseFormat{
+			StatusCode: http.StatusInternalServerError,
 			Message:    "Failed to create connection",
 		})
 	}
 
-	return c.JSON(200, responseFormat{
-		StatusCode: 200,
+	return c.JSON(http.StatusOK, responseFormat{
+		StatusCode: http.StatusOK,
 		Message:    "Success",
 	})
 }
