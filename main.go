@@ -26,7 +26,7 @@ var (
 )
 
 func main() {
-
+	go hub.run()
 	r := echo.New()
 	r.Use(middleware.Logger())
 	r.GET("/ws", connectClient)
@@ -41,6 +41,7 @@ func main() {
 }
 
 func connectClient(c echo.Context) error {
+
 	u := new(userInfo)
 	if err := c.Bind(u); err != nil {
 		return c.JSON(http.StatusInternalServerError, responseFormat{
