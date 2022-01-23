@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -18,11 +17,9 @@ var (
 		WriteBufferSize:   1024,
 		EnableCompression: false,
 		CheckOrigin: func(r *http.Request) bool {
-			myLogger.Println(r)
 			return true
 		},
 	}
-	myLogger = log.New(os.Stdout, "INFO: ", log.LstdFlags)
 )
 
 type responseFormat struct {
@@ -94,7 +91,7 @@ func connectClient(c echo.Context) error {
 
 func (c clientInfo) Start() {
 	defer func() {
-
+		c.Conn.Close()
 	}()
 	for {
 		messageType, p, err := c.Conn.ReadMessage()
