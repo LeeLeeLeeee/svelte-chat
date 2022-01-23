@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"errors"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -110,7 +109,6 @@ func connectWs(hub *Hub, w *echo.Response, r *http.Request) error {
 	}
 	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256)}
 	client.hub.register <- client
-	fmt.Print("aaaa")
 	// Allow collection of memory referenced by the caller by doing all work in
 	// new goroutines.
 	go client.write()
