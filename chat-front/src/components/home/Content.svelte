@@ -1,14 +1,22 @@
 <script>
 	import { userStore } from '$stores/user';
+	import { setSocketClient } from '$stores/socketClient';
 	import { roomStore, deleteRoom } from '$stores/room';
+	import { goto } from '$app/navigation';
 	import Card from '$components/common/Card';
 	import SocketClient from '$lib/socket';
 	
 	$: enterAbleRoomList = $roomStore.roomList; //.filter((room) => !room.userList.includes($userStore.username));
-	let sc = null;
 	const handleCardClick = (roomName) => {
-		sc = new SocketClient($userStore.username, roomName);
+		try {
+			setSocketClient(new SocketClient($userStore.username, roomName));
+			goto('/chat/1');
+		} catch(error) {
+			console.log(error);
+			/* error handling */
+		}
 	};
+
 </script>
 
 <div class="h-full flex flex-col bg-slate-50">

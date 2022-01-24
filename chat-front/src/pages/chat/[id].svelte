@@ -5,8 +5,30 @@
 	import Input from '$components/common/Input.svelte';
 	import { time } from '$stores/time';
 	import ChatBox from '$components/chat/ChatBox.svelte';
+	import { setSocketClient, socketStore } from '$stores/socketClient';
+	import { onMount } from 'svelte';
+	import { userStore } from '$stores/user';
+	import SocketClient from '$lib/socket';
+	
+	let chats = []
+	let value = '';
 
-	let chats = [{isMine: true, message: 'hi'}]
+	onMount(() => {
+		if( $socketStore.socketClient === null ) {
+			const sc = new SocketClient($userStore.username, 'aaa');
+			sc.onListenHandler((e) => {
+				console.log(e)
+			})
+			setSocketClient(sc);
+		}
+	})
+
+	let onSendMessage = () => {
+		chats = [...chats, { message: value, isMine: true}]
+		$socketStore.socketClient.sendMessage(value);
+		value = '';
+	}
+	
 </script>
 
 <div class="flex flex-col h-full rounded-lg">
@@ -22,9 +44,9 @@
 	<div class="p-2 flex items-center">
 		<div class="icon"><GiBackup /></div>
 		<div class="border-l border-l-gray-400 m-1" />
-		<Input class="flex-1" />
+		<Input bind:value class="flex-1" />
 		<div class="border-l border-l-gray-400 m-1" />
-		<Button>전송</Button>
+		<Button on:click={onSendMessage}>전송</Button>
 	</div>
 </div>
 

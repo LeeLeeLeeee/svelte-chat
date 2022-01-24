@@ -6,16 +6,22 @@ class SocketClient {
             this.socket.send('Hi!')
         };
         this.socket.onclose = (e) => {
-            console.log('close');
             this.socket.close()
         }
+    }
+
+    onListenHandler(handler) {
         this.socket.onmessage = (e) => {
-            console.log(e);
+            handler(e);
         }
     }
 
     sendMessage(message) {
         this.socket.send(message);
+    }
+
+    close() {
+        this.socket.close();
     }
 }
 
