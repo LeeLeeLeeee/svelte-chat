@@ -55,7 +55,7 @@ func connectClient(c echo.Context) error {
 			Message:    "name and roomName must have a vlaue.",
 		})
 	}
-	err := connectWs(hub, c.Response(), c.Request())
+	err := connectWs(hub, u.Name, c.Response(), c.Request())
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, responseFormat{

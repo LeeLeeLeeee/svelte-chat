@@ -17,9 +17,13 @@
 		if( $socketStore.socketClient === null ) {
 			const sc = new SocketClient($userStore.username, 'aaa');
 			sc.onListenHandler((e) => {
-				console.log(e)
+				chats = [...chats, { message: e.data, isMine: false}]
 			})
 			setSocketClient(sc);
+		} else {
+			$socketStore.socketClient.onListenHandler((e) => {
+				chats = [...chats, { message: e.data, isMine: false}]
+			})
 		}
 	})
 

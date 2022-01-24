@@ -101,13 +101,13 @@ func (c *Client) write() {
 	}
 }
 
-func connectWs(hub *Hub, w *echo.Response, r *http.Request) error {
+func connectWs(hub *Hub, name string, w *echo.Response, r *http.Request) error {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
 		return errors.New("connect fail")
 	}
-	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256)}
+	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256), ClientName: name}
 	client.hub.register <- client
 	// Allow collection of memory referenced by the caller by doing all work in
 	// new goroutines.

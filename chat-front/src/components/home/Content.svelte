@@ -19,7 +19,7 @@
 
 </script>
 
-<div class="h-full flex flex-col bg-slate-50">
+<div class="flex-1 flex flex-col bg-slate-50">
 	{#if $userStore.username === ''}
 		<div class="flex-1 flex items-center justify-center font-bold">계정을 생성해주세요</div>
 	{:else}
