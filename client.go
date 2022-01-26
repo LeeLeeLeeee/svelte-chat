@@ -2,7 +2,9 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -49,6 +51,7 @@ func (c *Client) read() {
 	c.conn.SetPongHandler(func(string) error { c.conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
 	for {
 		_, message, err := c.conn.ReadMessage()
+
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 				log.Printf("error: %v", err)
@@ -56,7 +59,8 @@ func (c *Client) read() {
 			break
 		}
 		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
-		c.hub.broadcast <- message
+		broadCastMessage := &BroadCastMessage{c.ClientName, message}
+		c.hub.broadcast <- broadCastMessage
 	}
 }
 
@@ -80,8 +84,13 @@ func (c *Client) write() {
 			if err != nil {
 				return
 			}
-			w.Write(message)
-
+			packedMessage := packMessageWithUser(c.ClientName, string(message))
+			marshaledMessage, err := json.Marshal(packedMessage)
+			fmt.Println(string(marshaledMessage))
+			if err != nil {
+				return
+			}
+			w.Write(marshaledMessage)
 			// Add queued chat messages to the current websocket message.
 			n := len(c.send)
 			for i := 0; i < n; i++ {
@@ -114,4 +123,11 @@ func connectWs(hub *Hub, name string, w *echo.Response, r *http.Request) error {
 	go client.write()
 	go client.read()
 	return nil
+}
+
+func packMessageWithUser(name string, message string) map[string]interface{} {
+	packedMessage := make(map[string]interface{})
+	packedMessage["To"] = name
+	packedMessage["Message"] = message
+	return packedMessage
 }

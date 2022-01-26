@@ -22,7 +22,8 @@
 			setSocketClient(sc);
 		} else {
 			$socketStore.socketClient.onListenHandler((e) => {
-				chats = [...chats, { message: e.data, isMine: false}]
+				const { To: username, Message: message} = JSON.parse(e.data)
+				chats = [...chats, { message: message, isMine: false, name: username}]
 			})
 		}
 	})
@@ -41,8 +42,8 @@
 		<div class="icon"><GoSignOut /></div>
 	</div>
 	<div class="flex flex-col gap-3 flex-1 bg-amber-50-50 pt-2 pb-2 pl-3 pr-3 bg-zinc-100">
-		{#each chats as { isMine, message } , i (i)}
-			<ChatBox message={message} isMine={isMine} />
+		{#each chats as { isMine, message, name } , i (i)}
+			<ChatBox message={message} isMine={isMine} sender={name} />
 		{/each}
 	</div>
 	<div class="p-2 flex items-center">

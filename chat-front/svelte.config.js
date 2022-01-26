@@ -22,6 +22,7 @@ const config = {
 				extensions: ['.svelte', '.js']
 			},
 			server: {
+				port: 3001,
 				proxy: {
 					'/ws': {
 						target: 'ws://localhost:19123',

@@ -1,11 +1,16 @@
 package main
 
+type BroadCastMessage struct {
+	To      string
+	Message []byte
+}
+
 type Hub struct {
 	// Registered clients.
 	clients map[*Client]bool
 
 	// Inbound messages from the clients.
-	broadcast chan []byte
+	broadcast chan *BroadCastMessage
 
 	// Register requests from the clients.
 	register chan *Client
@@ -16,7 +21,7 @@ type Hub struct {
 
 func newHub() *Hub {
 	return &Hub{
-		broadcast:  make(chan []byte),
+		broadcast:  make(chan *BroadCastMessage),
 		register:   make(chan *Client),
 		unregister: make(chan *Client),
 		clients:    make(map[*Client]bool),
@@ -35,8 +40,11 @@ func (h *Hub) run() {
 			}
 		case message := <-h.broadcast:
 			for client := range h.clients {
+				if client.ClientName == message.To {
+					continue
+				}
 				select {
-				case client.send <- message:
+				case client.send <- message.Message:
 				default:
 					close(client.send)
 					delete(h.clients, client)

@@ -41,7 +41,6 @@ func main() {
 }
 
 func connectClient(c echo.Context) error {
-
 	u := new(userInfo)
 	if err := c.Bind(u); err != nil {
 		return c.JSON(http.StatusInternalServerError, responseFormat{
@@ -49,10 +48,11 @@ func connectClient(c echo.Context) error {
 			Message:    "Failed to bind",
 		})
 	}
+
 	if u.Name == "" {
 		return c.JSON(http.StatusBadRequest, responseFormat{
 			StatusCode: http.StatusBadRequest,
-			Message:    "name and roomName must have a vlaue.",
+			Message:    "name and roomName must have a value.",
 		})
 	}
 	err := connectWs(hub, u.Name, c.Response(), c.Request())
