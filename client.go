@@ -37,7 +37,7 @@ var upgrader = websocket.Upgrader{
 type Client struct {
 	hub        *Hub
 	conn       *websocket.Conn
-	send       chan []byte
+	send       chan *BroadCastMessage
 	ClientName string
 }
 
@@ -58,6 +58,7 @@ func (c *Client) read() {
 			}
 			break
 		}
+		fmt.Println(string(message))
 		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
 		broadCastMessage := &BroadCastMessage{c.ClientName, message}
 		c.hub.broadcast <- broadCastMessage
@@ -75,7 +76,6 @@ func (c *Client) write() {
 		case message, ok := <-c.send:
 			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if !ok {
-				// The hub closed the channel.
 				c.conn.WriteMessage(websocket.CloseMessage, []byte{})
 				return
 			}
@@ -84,18 +84,22 @@ func (c *Client) write() {
 			if err != nil {
 				return
 			}
-			packedMessage := packMessageWithUser(c.ClientName, string(message))
+			packedMessage := packMessageWithUser(message.To, string(message.Message))
 			marshaledMessage, err := json.Marshal(packedMessage)
 			fmt.Println(string(marshaledMessage))
 			if err != nil {
 				return
 			}
 			w.Write(marshaledMessage)
-			// Add queued chat messages to the current websocket message.
 			n := len(c.send)
 			for i := 0; i < n; i++ {
 				w.Write(newline)
-				w.Write(<-c.send)
+				message, ok := <-c.send
+				if !ok {
+					c.conn.WriteMessage(websocket.CloseMessage, []byte{})
+					return
+				}
+				w.Write(message.Message)
 			}
 
 			if err := w.Close(); err != nil {
@@ -116,7 +120,7 @@ func connectWs(hub *Hub, name string, w *echo.Response, r *http.Request) error {
 		log.Println(err)
 		return errors.New("connect fail")
 	}
-	client := &Client{hub: hub, conn: conn, send: make(chan []byte, 256), ClientName: name}
+	client := &Client{hub: hub, conn: conn, send: make(chan *BroadCastMessage), ClientName: name}
 	client.hub.register <- client
 	// Allow collection of memory referenced by the caller by doing all work in
 	// new goroutines.
