@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -58,7 +57,6 @@ func (c *Client) read() {
 			}
 			break
 		}
-		fmt.Println(string(message))
 		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
 		broadCastMessage := &BroadCastMessage{c.ClientName, message}
 		c.hub.broadcast <- broadCastMessage
@@ -86,7 +84,6 @@ func (c *Client) write() {
 			}
 			packedMessage := packMessageWithUser(message.To, string(message.Message))
 			marshaledMessage, err := json.Marshal(packedMessage)
-			fmt.Println(string(marshaledMessage))
 			if err != nil {
 				return
 			}

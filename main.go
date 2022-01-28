@@ -21,15 +21,25 @@ type userInfo struct {
 }
 
 var (
-	hub  = newHub()
-	addr = flag.String("addr", ":19123", "http service address")
+	hub           = newHub()
+	room, roomErr = newRoom()
+	addr          = flag.String("addr", ":19123", "http service address")
 )
 
 func main() {
 	go hub.run()
+	if roomErr != nil {
+		panic("redis server can't connect")
+	}
+	defer func() {
+		room.conn.Do("FLUSHALL")
+		room.conn.Close()
+	}()
 	r := echo.New()
 	r.Use(middleware.Logger())
 	r.GET("/ws", connectClient)
+	r.GET("/api/create", createRoom)
+	r.GET("/api/room", getRoomList)
 	server := &http.Server{
 		Handler:      r,
 		ReadTimeout:  10 * time.Second,
@@ -68,4 +78,20 @@ func connectClient(c echo.Context) error {
 		StatusCode: http.StatusOK,
 		Message:    "Success",
 	})
+}
+
+func createRoom(c echo.Context) error {
+	_, err := room.setRoom(c.QueryParam("roomName"))
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func getRoomList(c echo.Context) error {
+	roomList, err := room.getRoom()
+	if err != nil {
+		return err
+	}
+	return c.JSON(http.StatusOK, roomList)
 }
