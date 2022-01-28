@@ -5,24 +5,27 @@
 	import Input from '$components/common/Input.svelte';
 	import { time } from '$stores/time';
 	import ChatBox from '$components/chat/ChatBox.svelte';
-	import { setSocketClient, socketStore } from '$stores/socketClient';
+	import { deleteSocketClient, setSocketClient, socketStore } from '$stores/socketClient';
 	import { onMount } from 'svelte';
 	import { userStore } from '$stores/user';
 	import SocketClient from '$lib/socket';
+	import { goto } from '$app/navigation';
 	
 	let chats = []
 	let value = '';
 
 	onMount(() => {
+		let sc = null
 		if( $socketStore.socketClient === null ) {
-			const sc = new SocketClient($userStore.username, 'aaa');
+			sc = new SocketClient($userStore.username, 'aaa');
 			setSocketClient(sc);
 		} else {
-			$socketStore.socketClient.onListenHandler((e) => {
-				const { To: username, Message: message} = JSON.parse(e.data)
-				chats = [...chats, { message: message, isMine: false, name: username}]
-			})
+			sc = $socketStore.socketClient;
 		}
+		sc.onListenHandler((e) => {
+			const { To: username, Message: message} = JSON.parse(e.data)
+			chats = [...chats, { message: message, isMine: false, name: username}]
+		})
 	})
 
 	let onSendMessage = () => {
@@ -30,13 +33,19 @@
 		$socketStore.socketClient.sendMessage(value);
 		value = '';
 	}
+
+	let handleExitRoom = () => {
+		if ($socketStore.socketClient != null)
+			deleteSocketClient($socketStore.socketClient);
+		goto('/')
+	}
 	
 </script>
 
 <div class="flex flex-col h-full rounded-lg">
 	<div class="border-b border-b-gray-300 p-2 flex justify-between items-center">
 		<span>{$time}</span>
-		<div class="icon"><GoSignOut /></div>
+		<div on:click={handleExitRoom} class="icon"><GoSignOut /></div>
 	</div>
 	<div class="flex flex-col gap-3 flex-1 bg-amber-50-50 pt-2 pb-2 pl-3 pr-3 bg-zinc-100">
 		{#each chats as { isMine, message, name } , i (i)}

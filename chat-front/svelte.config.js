@@ -28,7 +28,8 @@ const config = {
 						target: 'ws://localhost:19123',
 						ws: true,
 						changeOrigin: true,
-					}
+					},
+					'/api': 'http://localhost:19123',
 				}
 			}
 		}

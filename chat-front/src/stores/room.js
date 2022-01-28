@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 import { v4 as uuidv4 } from 'uuid';
-
+import serverProxy from '$lib/server-proxy';
 export const roomStore = writable({
 	roomList: []
 });
@@ -32,6 +32,7 @@ export const createRoom = (roomName, username) => {
 		try {
 			findRoom(state.roomList, roomName);
 		} catch (error) {
+			serverProxy.createRoom(roomName)
 			state.roomList.push({
 				roomId,
 				roomName,
@@ -69,3 +70,7 @@ export const deleteRoom = (roomName) => {
 		roomList: state.roomList.filter((room) => room.roomName !== roomName)
 	}));
 };
+
+export const getRoomList = () => {
+	serverProxy.getRoomList();
+}

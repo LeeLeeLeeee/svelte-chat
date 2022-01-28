@@ -1,13 +1,22 @@
 import axios from 'axios';
 class ServerProxy {
     constructor() {
-        axios.defaults.baseURL = "/api/v1";
+        axios.defaults.baseURL = "/api";
         axios.defaults.headers.common['Content-Type'] = 'application/json'
     }
 
-    async connectRoom(name, roomName) {
+    async createRoom(roomName) {
         try {
-            const data = await axios.post('/connect', { name, roomName })
+            await axios.get(`/create?roomName=${roomName}`);
+        } catch(error) {
+            console.log(error);
+        }
+    }
+
+    async getRoomList() {
+        try {
+            const roomLIst = await axios.get('/room');
+            console.log(roomLIst);
         } catch(error) {
             console.log(error);
         }
