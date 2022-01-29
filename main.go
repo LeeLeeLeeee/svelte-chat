@@ -16,30 +16,32 @@ type responseFormat struct {
 	Data       interface{} `json:"data,omitempty"`
 }
 
-type userInfo struct {
+type userParam struct {
+	Name string `json:"name"`
+}
+
+type roomParam struct {
+	Id   string `json:"id"`
 	Name string `json:"name"`
 }
 
 var (
-	hub           = newHub()
-	room, roomErr = newRoom()
-	addr          = flag.String("addr", ":19123", "http service address")
+	hub        = newHub()
+	roomList   = newRoomList()
+	addr       = flag.String("addr", ":19123", "http service address")
+	clientList = new(ClientList)
 )
 
 func main() {
 	go hub.run()
-	if roomErr != nil {
-		panic("redis server can't connect")
-	}
-	defer func() {
-		room.conn.Do("FLUSHALL")
-		room.conn.Close()
-	}()
+
 	r := echo.New()
 	r.Use(middleware.Logger())
-	r.GET("/ws", connectClient)
-	r.GET("/api/create", createRoom)
+	r.GET("/ws/room", connectRoom)
+	r.GET("/ws/client", connectClient)
+	r.POST("/api/room/create", createRoom)
 	r.GET("/api/room", getRoomList)
+	r.POST("/api/user/create", createUser)
 	server := &http.Server{
 		Handler:      r,
 		ReadTimeout:  10 * time.Second,
@@ -50,24 +52,23 @@ func main() {
 	panic(server.ListenAndServe())
 }
 
-func connectClient(c echo.Context) error {
-	u := new(userInfo)
-	if err := c.Bind(u); err != nil {
-		return c.JSON(http.StatusInternalServerError, responseFormat{
-			StatusCode: http.StatusInternalServerError,
-			Message:    "Failed to bind",
-		})
-	}
+func connectRoom(c echo.Context) error {
+	// userName := c.QueryParam("name")
+	return nil
+}
 
-	if u.Name == "" {
-		return c.JSON(http.StatusBadRequest, responseFormat{
-			StatusCode: http.StatusBadRequest,
-			Message:    "name and roomName must have a value.",
-		})
-	}
-	err := connectWs(hub, u.Name, c.Response(), c.Request())
+func connectClient(c echo.Context) error {
+	userName := c.QueryParam("name")
+	client, err := clientList.findUser(userName)
 
 	if err != nil {
+		return c.JSON(http.StatusInternalServerError, responseFormat{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "this user isn't registed",
+		})
+	}
+
+	if err := connectWs(hub, client, c.Response(), c.Request()); err != nil {
 		return c.JSON(http.StatusInternalServerError, responseFormat{
 			StatusCode: http.StatusInternalServerError,
 			Message:    "Failed to create connection",
@@ -81,17 +82,64 @@ func connectClient(c echo.Context) error {
 }
 
 func createRoom(c echo.Context) error {
-	_, err := room.setRoom(c.QueryParam("roomName"))
-	if err != nil {
-		return err
+	r := new(roomParam)
+	if err := c.Bind(r); err != nil {
+		return c.JSON(http.StatusBadRequest, responseFormat{
+			StatusCode: http.StatusBadRequest,
+			Message:    "roomName is blanck",
+		})
 	}
-	return nil
+
+	room, err := roomList.createRoom(r.Id, r.Name)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, responseFormat{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Fail to created",
+		})
+	}
+	return c.JSON(http.StatusCreated, responseFormat{
+		StatusCode: http.StatusCreated,
+		Message:    "ok",
+		Data:       room,
+	})
 }
 
 func getRoomList(c echo.Context) error {
-	roomList, err := room.getRoom()
-	if err != nil {
-		return err
+	roomList := roomList.get()
+
+	return c.JSON(http.StatusOK, responseFormat{
+		StatusCode: http.StatusOK,
+		Message:    "ok",
+		Data:       roomList,
+	})
+}
+
+func createUser(c echo.Context) error {
+	u := new(userParam)
+	if err := c.Bind(u); err != nil {
+		return c.JSON(http.StatusInternalServerError, responseFormat{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Failed to bind",
+		})
 	}
-	return c.JSON(http.StatusOK, roomList)
+
+	if u.Name == "" {
+		return c.JSON(http.StatusBadRequest, responseFormat{
+			StatusCode: http.StatusBadRequest,
+			Message:    "name and roomName must have a value.",
+		})
+	}
+
+	client, err := clientList.createClient(u.Name)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, responseFormat{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Fail to create",
+		})
+	}
+	return c.JSON(http.StatusCreated, responseFormat{
+		StatusCode: http.StatusCreated,
+		Message:    "ok",
+		Data:       client,
+	})
 }

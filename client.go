@@ -34,10 +34,15 @@ var upgrader = websocket.Upgrader{
 }
 
 type Client struct {
-	hub        *Hub
-	conn       *websocket.Conn
-	send       chan *BroadCastMessage
-	ClientName string
+	hub          *Hub
+	conn         *websocket.Conn
+	send         chan *BroadCastMessage
+	ClientName   string
+	assignedRoom []string
+}
+
+type ClientList struct {
+	list []*Client
 }
 
 func (c *Client) read() {
@@ -111,16 +116,15 @@ func (c *Client) write() {
 	}
 }
 
-func connectWs(hub *Hub, name string, w *echo.Response, r *http.Request) error {
+func connectWs(hub *Hub, client *Client, w *echo.Response, r *http.Request) error {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
 		return errors.New("connect fail")
 	}
-	client := &Client{hub: hub, conn: conn, send: make(chan *BroadCastMessage), ClientName: name}
+	client.hub = hub
+	client.conn = conn
 	client.hub.register <- client
-	// Allow collection of memory referenced by the caller by doing all work in
-	// new goroutines.
 	go client.write()
 	go client.read()
 	return nil
@@ -131,4 +135,31 @@ func packMessageWithUser(name string, message string) map[string]interface{} {
 	packedMessage["To"] = name
 	packedMessage["Message"] = message
 	return packedMessage
+}
+
+func (cli *ClientList) createClient(name string) (*Client, error) {
+	if !cli.checkDuplicated(name) {
+		client := &Client{hub: nil, conn: nil, send: make(chan *BroadCastMessage), ClientName: name}
+		cli.insertUser(client)
+		return client, nil
+	}
+	return nil, errors.New("fail to create user")
+}
+
+func (cli *ClientList) findUser(name string) (*Client, error) {
+	for _, client := range cli.list {
+		if client.ClientName == name {
+			return client, nil
+		}
+	}
+	return nil, errors.New("not found")
+}
+
+func (cli *ClientList) insertUser(client *Client) {
+	cli.list = append(cli.list, client)
+}
+
+func (cli *ClientList) checkDuplicated(name string) bool {
+	_, err := cli.findUser(name)
+	return err == nil
 }
