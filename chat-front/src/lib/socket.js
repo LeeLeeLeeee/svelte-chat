@@ -1,6 +1,6 @@
 class SocketClient {
-    constructor(name, room) {
-        const url = `ws://localhost:3001/ws?name=${name}&roomName=${room}`
+    constructor(name) {
+        const url = `ws://localhost:3001/ws/client?name=${name}`
         this.socket = new WebSocket(url)
         this.socket.onopen = (e) => {
         };

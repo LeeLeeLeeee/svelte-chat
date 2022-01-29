@@ -5,20 +5,41 @@ class ServerProxy {
         axios.defaults.headers.common['Content-Type'] = 'application/json'
     }
 
-    async createRoom(roomName) {
+    async createRoom(roomId, roomName) {
         try {
-            await axios.get(`/create?roomName=${roomName}`);
-        } catch(error) {
-            console.log(error);
+            const { status, data } = await axios.post(`/room/create`, {
+                id: roomId,
+                name: roomName
+            });
+            if (status != 201) {
+                throw new Error(data.msg)
+            }
+            return data;
+        } catch (error) {
+            throw new Error(error);
         }
     }
 
     async getRoomList() {
         try {
-            const roomLIst = await axios.get('/room');
-            console.log(roomLIst);
-        } catch(error) {
-            console.log(error);
+            const { status, data } = await axios.get('/room');
+            if (status !== 200) {
+                throw new Error(data.msg)
+            } 
+            return data
+        } catch (error) {
+            throw new Error(error);
+        }
+    }
+
+    async createUser(name) {
+        try {
+            const { status, data } = await axios.post(`/user/create`, { name });
+            if (status != 201) {
+                throw new Error(data.msg)
+            }
+        } catch (error) {
+            throw new Error(error)
         }
     }
 }
