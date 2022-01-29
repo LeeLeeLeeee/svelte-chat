@@ -1,25 +1,28 @@
 <script>
 	import { userStore } from '$stores/user';
-	import { setSocketClient } from '$stores/socketClient';
 	import { roomStore, deleteRoom, getRoomList } from '$stores/room';
 	import { goto } from '$app/navigation';
 	import Card from '$components/common/Card';
-	import SocketClient from '$lib/socket';
+	
 	import { onMount } from 'svelte';
 	
 	$: enterAbleRoomList = $roomStore.roomList; //.filter((room) => !room.userList.includes($userStore.username));
-	const handleCardClick = (roomName) => {
-		try {
-			setSocketClient(new SocketClient($userStore.username, roomName));
-			goto('/chat/1');
-		} catch(error) {
-			console.log(error);
-			/* error handling */
-		}
-	};
+	// const handleCardClick = (roomName) => {
+	// 	try {
+	// 		setSocketClient(new SocketClient($userStore.username, roomName));
+	// 		goto('/chat/1');
+	// 	} catch(error) {
+	// 		console.log(error);
+	// 		/* error handling */
+	// 	}
+	// };
 
 	onMount(() => {
-		getRoomList()
+		try {
+			getRoomList()
+		} catch(error) {
+
+		}
 	})
 
 </script>

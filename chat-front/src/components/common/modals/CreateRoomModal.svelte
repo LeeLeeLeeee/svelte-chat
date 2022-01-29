@@ -7,9 +7,9 @@
 	import { createRoom } from '$stores/room';
 	let value = '';
 	let error = false;
-	const handleSubmit = (roomName) => {
+	const handleSubmit = async (roomName) => {
 		try {
-			createRoom(roomName, $userStore.username);
+			await createRoom(roomName, $userStore.username);
 			setModalClose();
 			value = '';
 		} catch (err) {
