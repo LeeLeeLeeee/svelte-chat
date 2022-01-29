@@ -1,12 +1,18 @@
 import { writable } from 'svelte/store';
+import serverProxy from '$lib/server-proxy';
 
 export const userStore = writable({
-	username: `이영현-${Math.floor(Math.random() * 100)}`
+	username: ''
 });
 
-export const setUserName = (name) => {
-	if (name === '') {
-		throw new Error('isBlank');
+export const setUserName = async (name) => {
+	try {
+		if (name === '') {
+			throw new Error('isBlank');
+		}
+		await serverProxy.createUser(name)
+		userStore.update((state) => ({ ...state, username: name }));
+	} catch(error) {
+		throw new Error(error)
 	}
-	userStore.update((state) => ({ ...state, username: name }));
 };

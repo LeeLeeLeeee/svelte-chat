@@ -25,22 +25,22 @@ const findRoom = (roomList, roomName) => {
 	throw new Error('not found');
 };
 
-export const createRoom = (roomName, username) => {
+export const createRoom = async (roomName, username) => {
 	const roomId = uuidv4();
-
-	roomStore.update((state) => {
-		try {
-			findRoom(state.roomList, roomName);
-		} catch (error) {
-			serverProxy.createRoom(roomName)
+	try {
+		const { data: { id, name } } = await serverProxy.createRoom(roomId, roomName);
+		roomStore.update((state) => {
 			state.roomList.push({
-				roomId,
-				roomName,
+				roomId: id,
+				roomName: name,
 				userList: [username]
-			});
-		}
-		return { ...state };
-	});
+			})
+			return { ...state };
+		})
+	} catch (error) {
+		throw new Error(error)
+	}
+
 };
 
 export const enterRoom = (roomName, userName) => {
@@ -71,6 +71,14 @@ export const deleteRoom = (roomName) => {
 	}));
 };
 
-export const getRoomList = () => {
-	serverProxy.getRoomList();
+export const getRoomList = async () => {
+	try {
+		const { data } = await serverProxy.getRoomList();
+		roomStore.update((state) => ({
+			...state,
+			roomList: data.map((room) => ({ roomId: room.id, roomName: room.name, userList: [] }))
+		}))
+	} catch (error) {
+		console.log(error)
+	}
 }
