@@ -68,7 +68,23 @@ func (c *Client) checkHasRoom(room *Room) bool {
 func (c *Client) clearTargetRoom() {
 	if c.targetRoom != nil {
 		c.targetRoom.unregister(c)
+		c.targetRoom = nil
 	}
+}
+
+func (c *Client) exitRoom() error {
+	return nil
+}
+
+func (c *Client) removeRoomList(room *Room) {
+	roomIndex := FindIndex(c.roomList, func(value interface{}) bool {
+		r := value.(*Room)
+		return r.RoomId == room.RoomId
+	})
+
+	roomList := RemoveItemOfSlice(c.roomList, roomIndex)
+	c.roomList = roomList.([]*Room)
+
 }
 
 func (c *Client) read() {
