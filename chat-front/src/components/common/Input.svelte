@@ -9,7 +9,7 @@
 	<div>
 		<span class="empty:hidden text-gray-600">{label}</span>
 		{#if error}
-			<span class="text-red-600 text-xs" out:fade in:fade={{ duration: 750 }}
+			<span class="text-red-600 text-xs" out:fade in:fade={{ duration: 150 }}
 				>이름이 중복되었습니다.</span
 			>
 		{/if}
