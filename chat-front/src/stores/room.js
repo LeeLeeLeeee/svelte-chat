@@ -74,6 +74,7 @@ export const deleteRoom = (roomName) => {
 export const getRoomList = async () => {
 	try {
 		const { data } = await serverProxy.getRoomList();
+		console.log(data)
 		roomStore.update((state) => ({
 			...state,
 			roomList: data.map((room) => ({ roomId: room.id, roomName: room.name, userList: [] }))

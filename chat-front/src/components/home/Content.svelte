@@ -1,21 +1,24 @@
 <script>
 	import { userStore } from '$stores/user';
-	import { roomStore, deleteRoom, getRoomList } from '$stores/room';
+	import { roomStore, getRoomList } from '$stores/room';
 	import { goto } from '$app/navigation';
 	import Card from '$components/common/Card';
-	
 	import { onMount } from 'svelte';
+	import serverProxy from '$lib/server-proxy';
 	
-	$: enterAbleRoomList = $roomStore.roomList; //.filter((room) => !room.userList.includes($userStore.username));
-	// const handleCardClick = (roomName) => {
-	// 	try {
-	// 		setSocketClient(new SocketClient($userStore.username, roomName));
-	// 		goto('/chat/1');
-	// 	} catch(error) {
-	// 		console.log(error);
-	// 		/* error handling */
-	// 	}
-	// };
+	$: enterAbleRoomList = $roomStore.roomList;
+	
+	const handleCardClick = async (roomId, roomName, userName) => {
+		try {
+			const { status } = await serverProxy.coonectRoom(roomName, userName);
+			if(status === 200) {
+				goto(`/chat/${roomId}`);
+			}
+		} catch(error) {
+			console.log(error);
+			/* error handling */
+		}
+	};
 
 	onMount(() => {
 		try {
@@ -34,7 +37,7 @@
 		<div class="m-1">참여 가능한 방 목록</div>
 		<div class="flex-1 p-2 grid grid-cols-2 gap-4 justify-items-center auto-rows-max">
 			{#each enterAbleRoomList as { roomName, userList, roomId }, i (roomId)}
-				<Card on:click={() => handleCardClick(roomName)} title={roomName}>
+				<Card on:click={() => handleCardClick(roomId, roomName, $userStore.username)} title={roomName}>
 					<div slot="content" class="w-full text-right text-sm text-slate-500">
 						참여 인원: {userList.length}
 					</div>
