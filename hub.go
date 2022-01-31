@@ -6,16 +6,9 @@ type BroadCastMessage struct {
 }
 
 type Hub struct {
-	// Registered clients.
-	clients map[*Client]bool
-
-	// Inbound messages from the clients.
-	broadcast chan *BroadCastMessage
-
-	// Register requests from the clients.
-	register chan *Client
-
-	// Unregister requests from clients.
+	clients    map[*Client]bool
+	broadcast  chan *BroadCastMessage
+	register   chan *Client
 	unregister chan *Client
 }
 
