@@ -1,10 +1,13 @@
 package main
 
-import "errors"
+import (
+	"errors"
+)
 
 type Room struct {
 	RoomId   string `json:"id"`
 	RoomName string `json:"name"`
+	hub      *Hub
 }
 
 type RoomList struct {
@@ -15,6 +18,14 @@ func newRoomList() *RoomList {
 	return new(RoomList)
 }
 
+func (room *Room) register(client *Client) {
+	room.hub.register <- client
+}
+
+func (room *Room) unregister(client *Client) {
+	room.hub.unregister <- client
+}
+
 func (roomList *RoomList) checkDuplicated(name string) bool {
 	_, err := roomList.findRoom(name)
 	return err == nil
@@ -22,7 +33,9 @@ func (roomList *RoomList) checkDuplicated(name string) bool {
 
 func (roomList *RoomList) createRoom(id string, name string) (*Room, error) {
 	if !roomList.checkDuplicated(name) {
-		room := &Room{RoomId: id, RoomName: name}
+		hub := newHub()
+		go hub.run()
+		room := &Room{RoomId: id, RoomName: name, hub: hub}
 		roomList.insertRoom(room)
 		return room, nil
 	}

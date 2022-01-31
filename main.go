@@ -26,20 +26,17 @@ type roomParam struct {
 }
 
 var (
-	hub        = newHub()
 	roomList   = newRoomList()
 	addr       = flag.String("addr", ":19123", "http service address")
 	clientList = new(ClientList)
 )
 
 func main() {
-	go hub.run()
-
 	r := echo.New()
 	r.Use(middleware.Logger())
-	r.GET("/ws/room", connectRoom)
 	r.GET("/ws/client", connectClient)
 	r.POST("/api/room/create", createRoom)
+	r.GET("/api/room/connect", connectRoom)
 	r.GET("/api/room", getRoomList)
 	r.POST("/api/user/create", createUser)
 	server := &http.Server{
@@ -53,8 +50,34 @@ func main() {
 }
 
 func connectRoom(c echo.Context) error {
-	// userName := c.QueryParam("name")
-	return nil
+	userName := c.QueryParam("userName")
+	roomName := c.QueryParam("roomName")
+	client, err := clientList.findUser(userName)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, responseFormat{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "client not found",
+		})
+	}
+
+	room, err := roomList.findRoom(roomName)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, responseFormat{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "room not found",
+		})
+	}
+
+	client.clearTargetRoom()
+	client.enterRoom(room)
+	room.register(client)
+
+	return c.JSON(http.StatusOK, responseFormat{
+		StatusCode: http.StatusOK,
+		Message:    "ok",
+	})
 }
 
 func connectClient(c echo.Context) error {
@@ -68,7 +91,7 @@ func connectClient(c echo.Context) error {
 		})
 	}
 
-	if err := connectWs(hub, client, c.Response(), c.Request()); err != nil {
+	if err := connectWs(client, c.Response(), c.Request()); err != nil {
 		return c.JSON(http.StatusInternalServerError, responseFormat{
 			StatusCode: http.StatusInternalServerError,
 			Message:    "Failed to create connection",

@@ -34,20 +34,45 @@ var upgrader = websocket.Upgrader{
 }
 
 type Client struct {
-	hub          *Hub
-	conn         *websocket.Conn
-	send         chan *BroadCastMessage
-	ClientName   string
-	assignedRoom []string
+	conn       *websocket.Conn
+	send       chan *BroadCastMessage
+	ClientName string
+	roomList   []*Room
+	targetRoom *Room
 }
 
 type ClientList struct {
 	list []*Client
 }
 
+func (c *Client) appendRoom(room *Room) {
+	c.roomList = append(c.roomList, room)
+}
+
+func (c *Client) enterRoom(room *Room) {
+	if !c.checkHasRoom(room) {
+		c.appendRoom(room)
+	}
+	c.targetRoom = room
+}
+
+func (c *Client) checkHasRoom(room *Room) bool {
+	for _, myRoom := range c.roomList {
+		if room.RoomName == myRoom.RoomName {
+			return true
+		}
+	}
+	return false
+}
+
+func (c *Client) clearTargetRoom() {
+	if c.targetRoom != nil {
+		c.targetRoom.unregister(c)
+	}
+}
+
 func (c *Client) read() {
 	defer func() {
-		c.hub.unregister <- c
 		c.conn.Close()
 	}()
 	c.conn.SetReadLimit(maxMessageSize)
@@ -64,7 +89,7 @@ func (c *Client) read() {
 		}
 		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
 		broadCastMessage := &BroadCastMessage{c.ClientName, message}
-		c.hub.broadcast <- broadCastMessage
+		c.targetRoom.hub.broadcast <- broadCastMessage
 	}
 }
 
@@ -116,15 +141,13 @@ func (c *Client) write() {
 	}
 }
 
-func connectWs(hub *Hub, client *Client, w *echo.Response, r *http.Request) error {
+func connectWs(client *Client, w *echo.Response, r *http.Request) error {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		log.Println(err)
 		return errors.New("connect fail")
 	}
-	client.hub = hub
 	client.conn = conn
-	client.hub.register <- client
 	go client.write()
 	go client.read()
 	return nil
@@ -139,7 +162,7 @@ func packMessageWithUser(name string, message string) map[string]interface{} {
 
 func (cli *ClientList) createClient(name string) (*Client, error) {
 	if !cli.checkDuplicated(name) {
-		client := &Client{hub: nil, conn: nil, send: make(chan *BroadCastMessage), ClientName: name}
+		client := &Client{conn: nil, send: make(chan *BroadCastMessage), ClientName: name, roomList: []*Room{}, targetRoom: nil}
 		cli.insertUser(client)
 		return client, nil
 	}
