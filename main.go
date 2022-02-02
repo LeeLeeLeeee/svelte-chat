@@ -26,9 +26,10 @@ type roomParam struct {
 }
 
 var (
-	roomList   = newRoomList()
-	addr       = flag.String("addr", ":19123", "http service address")
-	clientList = new(ClientList)
+	roomList      = newRoomList()
+	addr          = flag.String("addr", ":19123", "http service address")
+	clientList    = new(ClientList)
+	pubsubManager = new(PubSubManager)
 )
 
 func main() {
@@ -39,6 +40,7 @@ func main() {
 	r.GET("/api/room/connect", connectRoom)
 	r.GET("/api/room", getRoomList)
 	r.POST("/api/user/create", createUser)
+	r.GET("/api/user", getUser)
 	server := &http.Server{
 		Handler:      r,
 		ReadTimeout:  10 * time.Second,
@@ -164,5 +166,15 @@ func createUser(c echo.Context) error {
 		StatusCode: http.StatusCreated,
 		Message:    "ok",
 		Data:       client,
+	})
+}
+
+func getUser(c echo.Context) error {
+	cliList := clientList.getClientUserName()
+
+	return c.JSON(http.StatusOK, responseFormat{
+		StatusCode: http.StatusOK,
+		Message:    "ok",
+		Data:       cliList,
 	})
 }

@@ -24,15 +24,6 @@ const (
 	maxMessageSize = 512
 )
 
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:    1024,
-	WriteBufferSize:   1024,
-	EnableCompression: false,
-	CheckOrigin: func(r *http.Request) bool {
-		return true
-	},
-}
-
 type Client struct {
 	conn       *websocket.Conn
 	send       chan *BroadCastMessage
@@ -158,10 +149,9 @@ func (c *Client) write() {
 }
 
 func connectWs(client *Client, w *echo.Response, r *http.Request) error {
-	conn, err := upgrader.Upgrade(w, r, nil)
+	conn, err := ConnectWebSocket(w, r)
 	if err != nil {
-		log.Println(err)
-		return errors.New("connect fail")
+		return err
 	}
 	client.conn = conn
 	go client.write()
@@ -201,4 +191,12 @@ func (cli *ClientList) insertUser(client *Client) {
 func (cli *ClientList) checkDuplicated(name string) bool {
 	_, err := cli.findUser(name)
 	return err == nil
+}
+
+func (cli *ClientList) getClientUserName() []string {
+	clientNameList := []string{}
+	for _, client := range cli.list {
+		clientNameList = append(clientNameList, client.ClientName)
+	}
+	return clientNameList
 }

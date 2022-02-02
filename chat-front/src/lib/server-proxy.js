@@ -54,6 +54,18 @@ class ServerProxy {
             throw new Error(error)
         }
     }
+
+    async getUserList() {
+        try {
+            const { status, data } = await axios.get('/user');
+            if (status !== 200) {
+                throw new Error(data.msg)
+            }
+            return data;
+        } catch (error) {
+            throw new Error(error)
+        }
+    }
 }
 
 const serverProxy = new ServerProxy();
