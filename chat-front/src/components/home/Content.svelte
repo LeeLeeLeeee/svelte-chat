@@ -1,4 +1,5 @@
 <script>
+	import FaRedo from 'svelte-icons/fa/FaRedo.svelte'
 	import { userStore } from '$stores/user';
 	import { roomStore, getRoomList } from '$stores/room';
 	import { goto } from '$app/navigation';
@@ -20,6 +21,10 @@
 		}
 	};
 
+	const handleReloadClick = () => {
+		getRoomList()
+	}
+
 	onMount(() => {
 		try {
 			getRoomList()
@@ -34,7 +39,7 @@
 	{#if $userStore.username === ''}
 		<div class="flex-1 flex items-center justify-center font-bold">계정을 생성해주세요</div>
 	{:else}
-		<div class="m-1">참여 가능한 방 목록</div>
+		<div class="m-1 flex items-center">참여 가능한 방 목록 <div class="icon ml-1" on:click={handleReloadClick}><FaRedo /></div> </div>
 		<div class="flex-1 p-2 grid grid-cols-2 gap-4 justify-items-center auto-rows-max">
 			{#each enterAbleRoomList as { roomName, userList, roomId }, i (roomId)}
 				<Card on:click={() => handleCardClick(roomId, roomName, $userStore.username)} title={roomName}>
@@ -46,3 +51,7 @@
 		</div>
 	{/if}
 </div>
+
+<style>
+
+</style>

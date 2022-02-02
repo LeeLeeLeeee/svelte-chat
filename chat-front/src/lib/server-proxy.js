@@ -36,9 +36,22 @@ class ServerProxy {
         try {
             const { status, data } = await axios.get(`/room/connect?roomName=${roomName}&userName=${userName}`);
             if (status !== 200) {
-                throw new Error(error);
+                throw new Error(data.msg);
             }
             return data;    
+        } catch(error) {
+            throw new Error(error)
+        }
+    }
+
+    async exitRoom(userName) {
+        try {
+            const { status, data } = await axios.post(`/user/exit`, {
+                name: userName
+            })
+            if (status != 200) {
+                throw new Error(data.msg)
+            }
         } catch(error) {
             throw new Error(error)
         }
