@@ -5,7 +5,7 @@
 	import Input from '$components/common/Input.svelte';
 	import { time } from '$stores/time';
 	import ChatBox from '$components/chat/ChatBox.svelte';
-	import { deleteSocketClient, setSocketClient, socketStore } from '$stores/socketClient';
+	import { deleteSocketClient, setSocketClient, socketStore } from '$stores/socket';
 	import { onMount } from 'svelte';
 	import { userStore } from '$stores/user';
 	import SocketClient from '$lib/socket';
@@ -35,8 +35,7 @@
 	}
 
 	let handleExitRoom = () => {
-		if ($socketStore.socketClient != null)
-			deleteSocketClient($socketStore.socketClient);
+		deleteSocketClient();
 		goto('/')
 	}
 	

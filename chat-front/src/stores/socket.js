@@ -1,7 +1,7 @@
-import { SocketClient, SocketManager } from '$lib/socket';
+import SocketClient from '$lib/socket';
 import { writable } from 'svelte/store';
 
-export const socketStore = writable({ socketClient: null, socketManager: null });
+export const socketStore = writable({ socketClient: null });
 
 const closeSocket = (socket) => {
     if( socket !== null ) {

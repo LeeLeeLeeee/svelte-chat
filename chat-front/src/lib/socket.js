@@ -1,9 +1,6 @@
-class SocketClient {
-    constructor(name) {
-        const url = `ws://localhost:3001/ws/client?name=${name}`
+class BaseSocket {
+    constructor(url) {
         this.socket = new WebSocket(url)
-        this.socket.onopen = (e) => {
-        };
         this.socket.onclose = (e) => {
             this.socket.close()
         }
@@ -21,6 +18,15 @@ class SocketClient {
 
     close() {
         this.socket.close();
+    }
+}
+
+class SocketClient extends BaseSocket {
+    constructor(name) {
+        super(`ws://localhost:3001/ws/client?name=${name}`)
+        this.socket.onopen = (e) => {
+            console.log("socket-client is connected")
+        };
     }
 }
 

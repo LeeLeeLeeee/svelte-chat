@@ -11,8 +11,8 @@
 
 	const dispatch = createEventDispatcher();
 
-	function handleClick(roomId) {
-		dispatch('listItemClick', { roomId });
+	function handleClick(param) {
+		dispatch('listItemClick', { param });
 	}
 
 	function closeDropDownItem(event) {
@@ -39,15 +39,23 @@
 	<div class="icon rounded-full"><GoChevronDown /></div>
 	{#if isOpen}
 		<ul
-			in:slide={{ duration: 300 }}
-			out:slide={{ duration: 300 }}
+			in:slide={{ duration: 100 }}
+			out:slide={{ duration: 100 }}
 			class="drop-down-list absolute text-xs drop-shadow-md bg-white p-2 rounded-md border border-gray-300"
 		>
-			{#each list as item (item[listItemKey.id])}
-				<li on:click={() => handleClick(item[listItemKey.id])}>
-					{item[listItemKey.label]}
-				</li>
-			{/each}
+			{#if typeof list[0] === 'object'}
+				{#each list as item (item[listItemKey.id])}
+					<li on:click={() => handleClick(item[listItemKey.id])}>
+						{item[listItemKey.label]}
+					</li>
+				{/each}
+			{:else}
+				{#each list as item}
+					<li on:click={() => handleClick(item)}>
+						{item}
+					</li>
+				{/each}
+			{/if}
 		</ul>
 	{/if}
 </div>

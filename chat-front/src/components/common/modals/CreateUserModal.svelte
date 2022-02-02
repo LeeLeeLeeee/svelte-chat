@@ -2,17 +2,15 @@
 	import Button from '../Button.svelte';
 	import Modal from '../Modal.svelte';
 	import Input from '../Input.svelte';
-	import { setUserName } from '$stores/user';
+	import { createUserName } from '$stores/user';
 	import { setModalClose } from '$stores/modal';
-	import SocketClient from '$lib/socket';
-	import { setSocketClient } from '$stores/socketClient';
+	import { setAllSocket } from '$stores/socket';
 	let value = '';
 	let error = false;
 	const handleSubmit = async (name) => {
 		try {
-			await setUserName(name);
-			const sc = new SocketClient(name);
-			setSocketClient(sc)
+			await createUserName(name);
+			setAllSocket(name)
 			setModalClose();
 			value = '';
 		} catch (err) {

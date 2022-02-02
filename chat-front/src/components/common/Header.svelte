@@ -1,10 +1,12 @@
 <script>
 	import Button from '$components/common/Button';
 	import { setModalOpen, setModalTarget } from '$stores/modal';
-	import { userStore } from '$stores/user';
+	import { getUserNameList, setUserName, userStore } from '$stores/user';
 	import { roomStore } from '$stores/room';
 	import Dropdown from './Dropdown.svelte';
 	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
+	import { setAllSocket } from '$stores/socket';
 
 	const createUserModalOpen = () => {
 		setModalTarget('create-user');
@@ -16,22 +18,38 @@
 		setModalOpen();
 	};
 
-	const handleClick = ({ detail }) => {
-		const { roomId } = detail;
+	const handleRoomClick = ({ detail }) => {
+		const { param: roomId } = detail;
 		goto(`chat/${roomId}`);
 	};
+
+	const handleUserClick = ({ detail }) => {
+		const { param: userName } = detail;
+		setUserName(userName)
+		setAllSocket(userName)
+	}
+
+	onMount(() => {
+		getUserNameList()
+	})
 </script>
 
 <div class="p-2 shadow-sm z-10 relative flex justify-between">
 	{#if $userStore.username === ''}
 		<Button on:click={createUserModalOpen} main>계정 생성</Button>
+		<Dropdown
+			label="생성된 유저 목록"
+			list={$userStore.userNameList}
+			on:listItemClick={handleUserClick}
+		/>
+
 	{:else}
 		<Button on:click={createRoomModalOpen}>방 생성</Button>
 		<Dropdown
 			listItemKey={{ id: 'roomId', label: 'roomName' }}
 			label="참여한 방 목록"
 			list={$roomStore.roomList}
-			on:listItemClick={handleClick}
+			on:listItemClick={handleRoomClick}
 		/>
 	{/if}
 </div>
