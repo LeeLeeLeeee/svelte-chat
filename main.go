@@ -39,6 +39,7 @@ func main() {
 	r.POST("/api/room/create", createRoom)
 	r.GET("/api/room/connect", connectRoom)
 	r.GET("/api/room", getRoomList)
+	r.POST("/api/user/exit", exitRoom)
 	r.POST("/api/user/create", createUser)
 	r.GET("/api/user", getUser)
 	server := &http.Server{
@@ -111,7 +112,7 @@ func createRoom(c echo.Context) error {
 	if err := c.Bind(r); err != nil {
 		return c.JSON(http.StatusBadRequest, responseFormat{
 			StatusCode: http.StatusBadRequest,
-			Message:    "roomName is blanck",
+			Message:    "bad request",
 		})
 	}
 
@@ -176,5 +177,33 @@ func getUser(c echo.Context) error {
 		StatusCode: http.StatusOK,
 		Message:    "ok",
 		Data:       cliList,
+	})
+}
+
+func exitRoom(c echo.Context) error {
+	userParam := new(userParam)
+	if err := c.Bind(userParam); err != nil {
+		return c.JSON(http.StatusBadRequest, responseFormat{
+			StatusCode: http.StatusBadRequest,
+			Message:    "bad request",
+		})
+	}
+	if userParam.Name == "" {
+		return c.JSON(http.StatusBadRequest, responseFormat{
+			StatusCode: http.StatusBadRequest,
+			Message:    "userName is blanck",
+		})
+	}
+	user, err := clientList.findUser(userParam.Name)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, responseFormat{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "can't find user",
+		})
+	}
+	user.exitRoom()
+	return c.JSON(http.StatusOK, responseFormat{
+		StatusCode: http.StatusOK,
+		Message:    "ok",
 	})
 }

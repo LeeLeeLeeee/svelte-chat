@@ -64,6 +64,7 @@ func (c *Client) clearTargetRoom() {
 }
 
 func (c *Client) exitRoom() error {
+	c.clearTargetRoom()
 	return nil
 }
 
@@ -72,10 +73,7 @@ func (c *Client) removeRoomList(room *Room) {
 		r := value.(*Room)
 		return r.RoomId == room.RoomId
 	})
-
-	roomList := RemoveItemOfSlice(c.roomList, roomIndex)
-	c.roomList = roomList.([]*Room)
-
+	RemoveItemOfSlice(&c.roomList, roomIndex)
 }
 
 func (c *Client) read() {

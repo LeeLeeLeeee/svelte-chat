@@ -27,10 +27,7 @@ func (h *Hub) run() {
 		case client := <-h.register:
 			h.clients[client] = true
 		case client := <-h.unregister:
-			if _, ok := h.clients[client]; ok {
-				delete(h.clients, client)
-				close(client.send)
-			}
+			delete(h.clients, client)
 		case message := <-h.broadcast:
 			for client := range h.clients {
 				if client.ClientName == message.To {
