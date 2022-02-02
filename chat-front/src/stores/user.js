@@ -7,15 +7,11 @@ export const userStore = writable({
 });
 
 export const createUserName = async (name) => {
-	try {
-		if (name === '') {
-			throw new Error('isBlank');
-		}
-		await serverProxy.createUser(name);
-		setUserName(name);
-	} catch(error) {
-		console.log(error);
+	if (name === '') {
+		throw new Error('isBlank');
 	}
+	await serverProxy.createUser(name);
+	setUserName(name);
 };
 
 export const setUserName = (name) => {

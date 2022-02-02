@@ -6,7 +6,7 @@
 	import Dropdown from './Dropdown.svelte';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
-	import { setAllSocket } from '$stores/socket';
+	import { setSocketClient } from '$stores/socket';
 
 	const createUserModalOpen = () => {
 		setModalTarget('create-user');
@@ -26,7 +26,7 @@
 	const handleUserClick = ({ detail }) => {
 		const { param: userName } = detail;
 		setUserName(userName)
-		setAllSocket(userName)
+		setSocketClient(userName)
 	}
 
 	onMount(() => {

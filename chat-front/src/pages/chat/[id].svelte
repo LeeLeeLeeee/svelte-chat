@@ -3,13 +3,15 @@
 	import GiBackup from 'svelte-icons/gi/GiBackup.svelte'
 	import Button from '$components/common/Button.svelte';
 	import Input from '$components/common/Input.svelte';
+	
 	import { time } from '$stores/time';
 	import ChatBox from '$components/chat/ChatBox.svelte';
-	import { deleteSocketClient, setSocketClient, socketStore } from '$stores/socket';
+	import { setSocketClient, socketStore } from '$stores/socket';
 	import { onMount } from 'svelte';
 	import { userStore } from '$stores/user';
 	import SocketClient from '$lib/socket';
 	import { goto } from '$app/navigation';
+	import serverProxy from '$lib/server-proxy';
 	
 	let chats = []
 	let value = '';
@@ -35,7 +37,7 @@
 	}
 
 	let handleExitRoom = () => {
-		deleteSocketClient();
+		serverProxy.exitRoom($userStore.username)
 		goto('/')
 	}
 	
@@ -59,12 +61,3 @@
 		<Button on:click={onSendMessage}>전송</Button>
 	</div>
 </div>
-
-<style>
-	.icon {
-		width: 20px;
-		height: 20px;
-		cursor: pointer;
-		@apply text-blue-400;
-	}
-</style>

@@ -4,13 +4,13 @@
 	import Input from '../Input.svelte';
 	import { createUserName } from '$stores/user';
 	import { setModalClose } from '$stores/modal';
-	import { setAllSocket } from '$stores/socket';
+	import { setSocketClient } from '$stores/socket';
 	let value = '';
 	let error = false;
 	const handleSubmit = async (name) => {
 		try {
 			await createUserName(name);
-			setAllSocket(name)
+			setSocketClient(name)
 			setModalClose();
 			value = '';
 		} catch (err) {
