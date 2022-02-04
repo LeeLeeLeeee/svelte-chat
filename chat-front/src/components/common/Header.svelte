@@ -1,7 +1,7 @@
 <script>
 	import Button from '$components/common/Button';
 	import { setModalOpen, setModalTarget } from '$stores/modal';
-	import { getUserNameList, setUserName, userStore } from '$stores/user';
+	import { getNotAssignedUserNameList, setUserName, userStore } from '$stores/user';
 	import { roomStore } from '$stores/room';
 	import Dropdown from './Dropdown.svelte';
 	import { goto } from '$app/navigation';
@@ -30,7 +30,7 @@
 	}
 
 	onMount(() => {
-		getUserNameList()
+		getNotAssignedUserNameList()
 	})
 </script>
 

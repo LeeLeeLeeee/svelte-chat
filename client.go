@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -99,10 +100,11 @@ func (c *Client) read() {
 }
 
 func (c *Client) write() {
-	ticker := time.NewTicker(pingPeriod)
+	ticker := time.NewTicker(pingPeriod / 10)
 	defer func() {
 		ticker.Stop()
 		c.conn.Close()
+		c.conn = nil
 	}()
 	for {
 		select {
@@ -193,8 +195,20 @@ func (cli *ClientList) checkDuplicated(name string) bool {
 
 func (cli *ClientList) getClientUserName() []string {
 	clientNameList := []string{}
+	fmt.Print("user")
 	for _, client := range cli.list {
 		clientNameList = append(clientNameList, client.ClientName)
+	}
+	return clientNameList
+}
+
+func (cli *ClientList) getClientNotAssignedUserName() []string {
+	clientNameList := []string{}
+	fmt.Print("not")
+	for _, client := range cli.list {
+		if client.conn == nil {
+			clientNameList = append(clientNameList, client.ClientName)
+		}
 	}
 	return clientNameList
 }

@@ -33,7 +33,7 @@
 	class="relative cursor-pointer flex rounded-md items-center gap-3 border border-gray-300 pt-1 pb-1 pl-2 pr-2"
 >
 	{#if !isOpen}
-		<span class="ping-dot animate-ping absolute rounded-full bg-red-500" />
+		<!-- <span class="ping-dot animate-ping absolute rounded-full bg-red-500" /> -->
 	{/if}
 	<span class="text-sm">{label}</span>
 	<div class="icon rounded-full"><GoChevronDown /></div>

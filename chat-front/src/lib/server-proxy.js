@@ -32,7 +32,7 @@ class ServerProxy {
         }
     }
 
-    async coonectRoom(roomName, userName) {
+    async connectRoom(roomName, userName) {
         try {
             const { status, data } = await axios.get(`/room/connect?roomName=${roomName}&userName=${userName}`);
             if (status !== 200) {
@@ -68,9 +68,9 @@ class ServerProxy {
         }
     }
 
-    async getUserList() {
+    async getNotAssignedUserList() {
         try {
-            const { status, data } = await axios.get('/user');
+            const { status, data } = await axios.get('/user?notAssigned=true');
             if (status !== 200) {
                 throw new Error(data.msg)
             }

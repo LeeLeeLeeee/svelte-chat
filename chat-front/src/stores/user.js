@@ -18,9 +18,9 @@ export const setUserName = (name) => {
 	userStore.update((state) => ({ ...state, username: name }));
 }
 
-export const getUserNameList = async () => {
+export const getNotAssignedUserNameList = async () => {
 	try {
-		const { data } = await serverProxy.getUserList();
+		const { data } = await serverProxy.getNotAssignedUserList();
 		if (data.length > 0) {
 			userStore.update((state) => ({...state, userNameList: data}));
 		}

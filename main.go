@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -171,7 +172,13 @@ func createUser(c echo.Context) error {
 }
 
 func getUser(c echo.Context) error {
-	cliList := clientList.getClientUserName()
+	isNotAssigned := c.QueryParam("notAssigned")
+	var cliList []string
+	if ok, _ := strconv.ParseBool(isNotAssigned); ok {
+		cliList = clientList.getClientNotAssignedUserName()
+	} else {
+		cliList = clientList.getClientUserName()
+	}
 
 	return c.JSON(http.StatusOK, responseFormat{
 		StatusCode: http.StatusOK,
