@@ -29,7 +29,7 @@ export const createRoom = async (roomName, username) => {
 			state.roomList.push({
 				roomId: id,
 				roomName: name,
-				userCount: 1
+				userCount: 0
 			})
 			return { ...state };
 		})

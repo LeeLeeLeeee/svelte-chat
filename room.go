@@ -47,7 +47,7 @@ func (roomList *RoomList) createRoom(id string, name string) (*Room, error) {
 	if !roomList.checkDuplicated(name) {
 		hub := newHub()
 		go hub.run()
-		room := &Room{RoomId: id, RoomName: name, hub: hub, CountParticipant: 1}
+		room := &Room{RoomId: id, RoomName: name, hub: hub, CountParticipant: 0}
 		roomList.insertRoom(room)
 		return room, nil
 	}
