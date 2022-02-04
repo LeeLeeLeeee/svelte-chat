@@ -29,55 +29,14 @@ type Client struct {
 	conn       *websocket.Conn
 	send       chan *BroadCastMessage
 	ClientName string
-	roomList   []*Room
-	targetRoom *Room
 }
 
 type ClientList struct {
 	list []*Client
 }
 
-func (c *Client) appendRoom(room *Room) {
-	c.roomList = append(c.roomList, room)
-}
-
-func (c *Client) enterRoom(room *Room) {
-	if !c.checkHasRoom(room) {
-		c.appendRoom(room)
-	}
-	c.targetRoom = room
-}
-
-func (c *Client) checkHasRoom(room *Room) bool {
-	for _, myRoom := range c.roomList {
-		if room.RoomName == myRoom.RoomName {
-			return true
-		}
-	}
-	return false
-}
-
-func (c *Client) clearTargetRoom() {
-	if c.targetRoom != nil {
-		c.targetRoom.unregister(c)
-		c.targetRoom = nil
-	}
-}
-
-func (c *Client) exitRoom() error {
-	c.clearTargetRoom()
-	return nil
-}
-
-func (c *Client) removeRoomList(room *Room) {
-	roomIndex := FindIndex(c.roomList, func(value interface{}) bool {
-		r := value.(*Room)
-		return r.RoomId == room.RoomId
-	})
-	RemoveItemOfSlice(&c.roomList, roomIndex)
-}
-
 func (c *Client) read() {
+	var participatedRoom *Room
 	defer func() {
 		c.conn.Close()
 	}()
@@ -95,7 +54,15 @@ func (c *Client) read() {
 		}
 		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
 		broadCastMessage := &BroadCastMessage{c.ClientName, message}
-		c.targetRoom.hub.broadcast <- broadCastMessage
+
+		if participatedRoom == nil {
+			participatedRoom = roomList.findRoomHaveUser(c)
+		} else {
+			if !participatedRoom.checkClientIsRegisted(c) {
+				participatedRoom = roomList.findRoomHaveUser(c)
+			}
+		}
+		participatedRoom.hub.broadcast <- broadCastMessage
 	}
 }
 
@@ -168,7 +135,7 @@ func packMessageWithUser(name string, message string) map[string]interface{} {
 
 func (cli *ClientList) createClient(name string) (*Client, error) {
 	if !cli.checkDuplicated(name) {
-		client := &Client{conn: nil, send: make(chan *BroadCastMessage), ClientName: name, roomList: []*Room{}, targetRoom: nil}
+		client := &Client{conn: nil, send: make(chan *BroadCastMessage), ClientName: name}
 		cli.insertUser(client)
 		return client, nil
 	}

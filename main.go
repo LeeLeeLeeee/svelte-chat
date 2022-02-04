@@ -74,8 +74,6 @@ func connectRoom(c echo.Context) error {
 		})
 	}
 
-	client.clearTargetRoom()
-	client.enterRoom(room)
 	room.register(client)
 
 	return c.JSON(http.StatusOK, responseFormat{
@@ -208,7 +206,12 @@ func exitRoom(c echo.Context) error {
 			Message:    "can't find user",
 		})
 	}
-	user.exitRoom()
+	room := roomList.findRoomHaveUser(user)
+
+	if room != nil {
+		room.unregister(user)
+	}
+
 	return c.JSON(http.StatusOK, responseFormat{
 		StatusCode: http.StatusOK,
 		Message:    "ok",

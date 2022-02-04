@@ -71,6 +71,15 @@ func (roomList *RoomList) get() []*Room {
 	return roomList.list
 }
 
+func (roomList *RoomList) findRoomHaveUser(client *Client) *Room {
+	for _, room := range roomList.list {
+		if room.checkClientIsRegisted(client) {
+			return room
+		}
+	}
+	return nil
+}
+
 // type Room struct {
 // 	conn redis.Conn
 // 	sh   *rejson.Handler
