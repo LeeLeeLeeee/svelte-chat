@@ -1,20 +1,17 @@
 <script>
 	import FaRedo from 'svelte-icons/fa/FaRedo.svelte'
 	import { userStore } from '$stores/user';
-	import { roomStore, getRoomList } from '$stores/room';
-	import { goto } from '$app/navigation';
+	import { roomStore, getRoomList, enterRoom } from '$stores/room';
 	import Card from '$components/common/Card';
+	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
-	import serverProxy from '$lib/server-proxy';
 	
 	$: enterAbleRoomList = $roomStore.roomList;
 	
 	const handleCardClick = async (roomId, roomName, userName) => {
 		try {
-			const { status } = await serverProxy.coonectRoom(roomName, userName);
-			if(status === 200) {
-				goto(`/chat/${roomId}`);
-			}
+			await enterRoom(roomName, userName);
+			goto(`/chat/${roomId}`);
 		} catch(error) {
 			console.log(error);
 			/* error handling */
@@ -41,10 +38,10 @@
 	{:else}
 		<div class="m-1 flex items-center">참여 가능한 방 목록 <div class="icon ml-1" on:click={handleReloadClick}><FaRedo /></div> </div>
 		<div class="flex-1 p-2 grid grid-cols-2 gap-4 justify-items-center auto-rows-max">
-			{#each enterAbleRoomList as { roomName, userList, roomId }, i (roomId)}
+			{#each enterAbleRoomList as { roomName, userCount, roomId }, i (roomId)}
 				<Card on:click={() => handleCardClick(roomId, roomName, $userStore.username)} title={roomName}>
 					<div slot="content" class="w-full text-right text-sm text-slate-500">
-						참여 인원: {userList.length}
+						참여 인원: {userCount}
 					</div>
 				</Card>
 			{/each}

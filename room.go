@@ -5,9 +5,10 @@ import (
 )
 
 type Room struct {
-	RoomId   string `json:"id"`
-	RoomName string `json:"name"`
-	hub      *Hub
+	RoomId           string `json:"id"`
+	RoomName         string `json:"name"`
+	CountParticipant int    `json:"countParticipant"`
+	hub              *Hub
 }
 
 type RoomList struct {
@@ -19,11 +20,22 @@ func newRoomList() *RoomList {
 }
 
 func (room *Room) register(client *Client) {
-	room.hub.register <- client
+	if !room.checkClientIsRegisted(client) {
+		room.hub.register <- client
+		room.CountParticipant += 1
+	}
 }
 
 func (room *Room) unregister(client *Client) {
-	room.hub.unregister <- client
+	if room.checkClientIsRegisted(client) {
+		room.hub.unregister <- client
+		room.CountParticipant -= 1
+	}
+}
+
+func (room *Room) checkClientIsRegisted(client *Client) bool {
+	_, ok := room.hub.clients[client]
+	return ok
 }
 
 func (roomList *RoomList) checkDuplicated(name string) bool {
@@ -35,7 +47,7 @@ func (roomList *RoomList) createRoom(id string, name string) (*Room, error) {
 	if !roomList.checkDuplicated(name) {
 		hub := newHub()
 		go hub.run()
-		room := &Room{RoomId: id, RoomName: name, hub: hub}
+		room := &Room{RoomId: id, RoomName: name, hub: hub, CountParticipant: 1}
 		roomList.insertRoom(room)
 		return room, nil
 	}

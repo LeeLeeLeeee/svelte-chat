@@ -1,15 +1,11 @@
 import { writable } from 'svelte/store';
 import { v4 as uuidv4 } from 'uuid';
 import serverProxy from '$lib/server-proxy';
+
 export const roomStore = writable({
 	roomList: []
 });
 
-const setUserToRoom = (room, userName) => {
-	if (!room.userList.includes(userName)) {
-		room.userList.push(userName);
-	}
-};
 
 const deleteUserFromRoom = (room, userName) => {
 	if (room.userList.includes(userName)) {
@@ -22,7 +18,7 @@ const findRoom = (roomList, roomName) => {
 		if (roomName !== room.roomName) continue;
 		return room;
 	}
-	throw new Error('not found');
+	return false;
 };
 
 export const createRoom = async (roomName, username) => {
@@ -33,7 +29,7 @@ export const createRoom = async (roomName, username) => {
 			state.roomList.push({
 				roomId: id,
 				roomName: name,
-				userList: [username]
+				userCount: 1
 			})
 			return { ...state };
 		})
@@ -43,15 +39,12 @@ export const createRoom = async (roomName, username) => {
 
 };
 
-export const enterRoom = (roomName, userName) => {
-	roomStore.update((state) => {
-		try {
-			const room = findRoom(state.roomList, roomName);
-			setUserToRoom(room, userName);
-		} finally {
-			return { ...state };
-		}
-	});
+export const enterRoom = async (roomName, userName) => {
+	try {
+		 await serverProxy.connectRoom(roomName, userName);
+	} catch(error) {
+		throw new Error(error)
+	}
 };
 
 export const exitRoom = (roomName, userName) => {
@@ -77,7 +70,7 @@ export const getRoomList = async () => {
 		if (data !== null) {
 			roomStore.update((state) => ({
 				...state,
-				roomList: data.map((room) => ({ roomId: room.id, roomName: room.name, userList: [] }))
+				roomList: data.map((room) => ({ roomId: room.id, roomName: room.name, userCount: room.countParticipant }))
 			}))
 		}
 	} catch (error) {
