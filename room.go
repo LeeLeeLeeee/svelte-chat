@@ -38,6 +38,14 @@ func (room *Room) checkClientIsRegisted(client *Client) bool {
 	return ok
 }
 
+func (room *Room) getParticipatedClient() []string {
+	clientNameList := []string{}
+	for client := range room.hub.clients {
+		clientNameList = append(clientNameList, client.ClientName)
+	}
+	return clientNameList
+}
+
 func (roomList *RoomList) checkDuplicated(name string) bool {
 	_, err := roomList.findRoom(name)
 	return err == nil
@@ -54,9 +62,9 @@ func (roomList *RoomList) createRoom(id string, name string) (*Room, error) {
 	return nil, errors.New("fail to create room")
 }
 
-func (roomList *RoomList) findRoom(name string) (*Room, error) {
+func (roomList *RoomList) findRoom(id string) (*Room, error) {
 	for _, room := range roomList.list {
-		if room.RoomName == name {
+		if room.RoomId == id {
 			return room, nil
 		}
 	}

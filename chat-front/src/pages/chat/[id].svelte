@@ -1,9 +1,17 @@
+<script context="module">
+	export async function load({ params }) {
+		return {
+			props: {
+				roomId: params.id
+			}
+		};
+	}
+</script>
 <script>
 	import GoSignOut from 'svelte-icons/go/GoSignOut.svelte';
 	import GiBackup from 'svelte-icons/gi/GiBackup.svelte'
 	import Button from '$components/common/Button.svelte';
 	import Input from '$components/common/Input.svelte';
-	
 	import { time } from '$stores/time';
 	import ChatBox from '$components/chat/ChatBox.svelte';
 	import { setSocketClient, socketStore } from '$stores/socket';
@@ -12,11 +20,12 @@
 	import SocketClient from '$lib/socket';
 	import { goto } from '$app/navigation';
 	import serverProxy from '$lib/server-proxy';
+	import { getParticipatedClient } from '$stores/room';
 	
 	let chats = []
 	let value = '';
-
-	onMount(() => {
+	export let roomId = ''
+	onMount(async () => {
 		let sc = null
 		if( $socketStore.socketClient === null ) {
 			sc = new SocketClient($userStore.username, 'aaa');
@@ -28,6 +37,8 @@
 			const { To: username, Message: message} = JSON.parse(e.data)
 			chats = [...chats, { message: message, isMine: false, name: username}]
 		})
+		const data = await getParticipatedClient(roomId);
+		console.log(data)
 	})
 
 	let onSendMessage = () => {

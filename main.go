@@ -27,10 +27,9 @@ type roomParam struct {
 }
 
 var (
-	roomList      = newRoomList()
-	addr          = flag.String("addr", ":19123", "http service address")
-	clientList    = new(ClientList)
-	pubsubManager = new(PubSubManager)
+	roomList   = newRoomList()
+	addr       = flag.String("addr", ":19123", "http service address")
+	clientList = new(ClientList)
 )
 
 func main() {
@@ -55,7 +54,7 @@ func main() {
 
 func connectRoom(c echo.Context) error {
 	userName := c.QueryParam("userName")
-	roomName := c.QueryParam("roomName")
+	roomId := c.QueryParam("roomId")
 	client, err := clientList.findUser(userName)
 
 	if err != nil {
@@ -65,7 +64,7 @@ func connectRoom(c echo.Context) error {
 		})
 	}
 
-	room, err := roomList.findRoom(roomName)
+	room, err := roomList.findRoom(roomId)
 
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, responseFormat{
@@ -171,9 +170,14 @@ func createUser(c echo.Context) error {
 
 func getUser(c echo.Context) error {
 	isNotAssigned := c.QueryParam("notAssigned")
+	roomId := c.QueryParam("roomId")
 	var cliList []string
 	if ok, _ := strconv.ParseBool(isNotAssigned); ok {
 		cliList = clientList.getClientNotAssignedUserName()
+	} else if roomId != "" {
+		if room, err := roomList.findRoom(roomId); err == nil {
+			cliList = room.getParticipatedClient()
+		}
 	} else {
 		cliList = clientList.getClientUserName()
 	}

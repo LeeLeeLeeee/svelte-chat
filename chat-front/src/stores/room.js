@@ -39,9 +39,9 @@ export const createRoom = async (roomName, username) => {
 
 };
 
-export const enterRoom = async (roomName, userName) => {
+export const enterRoom = async (roomId, userName) => {
 	try {
-		 await serverProxy.connectRoom(roomName, userName);
+		 await serverProxy.connectRoom(roomId, userName);
 	} catch(error) {
 		throw new Error(error)
 	}
@@ -76,4 +76,15 @@ export const getRoomList = async () => {
 	} catch (error) {
 		console.log(error)
 	}
+}
+
+export const getParticipatedClient = async (roomId) => {
+	try {
+		const { data } = await serverProxy.getParticipatedClient(roomId);
+		return data;
+	} catch (error) {
+		console.log(error)
+		return [];
+	}
+	
 }

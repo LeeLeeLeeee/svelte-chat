@@ -32,9 +32,9 @@ class ServerProxy {
         }
     }
 
-    async connectRoom(roomName, userName) {
+    async connectRoom(roomId, userName) {
         try {
-            const { status, data } = await axios.get(`/room/connect?roomName=${roomName}&userName=${userName}`);
+            const { status, data } = await axios.get(`/room/connect?roomId=${roomId}&userName=${userName}`);
             if (status !== 200) {
                 throw new Error(data.msg);
             }
@@ -77,6 +77,18 @@ class ServerProxy {
             return data;
         } catch (error) {
             throw new Error(error)
+        }
+    }
+
+    async getParticipatedClient(roomId) {
+        try {
+            const { status, data } = await axios.get(`/user?roomId=${roomId}`);
+            if (status !== 200) {
+                throw new Error(data.msg)
+            }
+            return data;
+        } catch (error) {
+            throw new Error(error);
         }
     }
 }

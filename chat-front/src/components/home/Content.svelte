@@ -8,9 +8,9 @@
 	
 	$: enterAbleRoomList = $roomStore.roomList;
 	
-	const handleCardClick = async (roomId, roomName, userName) => {
+	const handleCardClick = async (roomId, userName) => {
 		try {
-			await enterRoom(roomName, userName);
+			await enterRoom(roomId, userName);
 			goto(`/chat/${roomId}`);
 		} catch(error) {
 			console.log(error);
@@ -39,7 +39,7 @@
 		<div class="m-1 flex items-center">참여 가능한 방 목록 <div class="icon ml-1" on:click={handleReloadClick}><FaRedo /></div> </div>
 		<div class="flex-1 p-2 grid grid-cols-2 gap-4 justify-items-center auto-rows-max">
 			{#each enterAbleRoomList as { roomName, userCount, roomId }, i (roomId)}
-				<Card on:click={() => handleCardClick(roomId, roomName, $userStore.username)} title={roomName}>
+				<Card on:click={() => handleCardClick(roomId, $userStore.username)} title={roomName}>
 					<div slot="content" class="w-full text-right text-sm text-slate-500">
 						참여 인원: {userCount}
 					</div>
