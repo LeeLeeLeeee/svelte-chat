@@ -1,7 +1,7 @@
 <script>
-	import Button from '../Button.svelte';
-	import Modal from '../Modal.svelte';
-	import Input from '../Input.svelte';
+	import Button from '$components/common/Button';
+	import Modal from '$components/common/Modal';
+	import Input from '$components/common/Input';
 	import { userStore } from '$stores/user';
 	import { setModalClose } from '$stores/modal';
 	import { createRoom } from '$stores/room';

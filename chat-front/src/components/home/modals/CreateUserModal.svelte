@@ -1,7 +1,7 @@
 <script>
-	import Button from '../Button.svelte';
-	import Modal from '../Modal.svelte';
-	import Input from '../Input.svelte';
+	import Button from '../../common/Button.svelte';
+	import Modal from '../../common/Modal.svelte';
+	import Input from '../../common/Input.svelte';
 	import { createUserName } from '$stores/user';
 	import { setModalClose } from '$stores/modal';
 	import { setSocketClient } from '$stores/socket';
