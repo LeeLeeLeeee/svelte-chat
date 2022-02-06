@@ -21,12 +21,34 @@ func newHub() *Hub {
 	}
 }
 
+func (h *Hub) notifyWelcome(client *Client) {
+	message := &BroadCastMessage{
+		To:      "admin",
+		Message: []byte(JoinStrings(client.ClientName, "님이 방에 참여하셨습니다.")),
+	}
+	for client := range h.clients {
+		client.send <- message
+	}
+}
+
+func (h *Hub) notifyLeave(client *Client) {
+	message := &BroadCastMessage{
+		To:      "admin",
+		Message: []byte(JoinStrings(client.ClientName, "님이 방에서 나가셨습니다.")),
+	}
+	for client := range h.clients {
+		client.send <- message
+	}
+}
+
 func (h *Hub) run() {
 	for {
 		select {
 		case client := <-h.register:
+			h.notifyWelcome(client)
 			h.clients[client] = true
 		case client := <-h.unregister:
+			h.notifyLeave(client)
 			delete(h.clients, client)
 		case message := <-h.broadcast:
 			for client := range h.clients {

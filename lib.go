@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"errors"
 	"net/http"
 	"reflect"
@@ -44,4 +45,12 @@ func ConnectWebSocket(w *echo.Response, r *http.Request) (*websocket.Conn, error
 		return nil, errors.New("connect fail")
 	}
 	return conn, nil
+}
+
+func JoinStrings(s ...string) string {
+	var result bytes.Buffer
+	for _, x := range s {
+		result.WriteString(x)
+	}
+	return result.String()
 }
