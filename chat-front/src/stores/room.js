@@ -3,7 +3,8 @@ import { v4 as uuidv4 } from 'uuid';
 import serverProxy from '$lib/server-proxy';
 
 export const roomStore = writable({
-	roomList: []
+	roomList: [],
+	participants: []
 });
 
 
@@ -81,7 +82,7 @@ export const getRoomList = async () => {
 export const getParticipatedClient = async (roomId) => {
 	try {
 		const { data } = await serverProxy.getParticipatedClient(roomId);
-		return data;
+		roomStore.update((state) => ({...state, participants: data}));
 	} catch (error) {
 		console.log(error)
 		return [];

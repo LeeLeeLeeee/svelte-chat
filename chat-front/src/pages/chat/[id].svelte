@@ -20,13 +20,17 @@
 	import SocketClient from '$lib/socket';
 	import { goto } from '$app/navigation';
 	import serverProxy from '$lib/server-proxy';
-	import { getParticipatedClient } from '$stores/room';
+	import { getParticipatedClient, roomStore } from '$stores/room';
+	import { setModalOpen, setModalTarget } from '$stores/modal';
 	
 	let chats = []
 	let value = '';
 	export let roomId = ''
-	onMount(async () => {
+	onMount(() => {
 		let sc = null
+		if ($userStore.username === "") {
+			goto("/")
+		}
 		if( $socketStore.socketClient === null ) {
 			sc = new SocketClient($userStore.username, 'aaa');
 			setSocketClient(sc);
@@ -37,8 +41,7 @@
 			const { To: username, Message: message} = JSON.parse(e.data)
 			chats = [...chats, { message: message, isMine: false, name: username}]
 		})
-		const data = await getParticipatedClient(roomId);
-		console.log(data)
+		getParticipatedClient(roomId);
 	})
 
 	let onSendMessage = () => {
@@ -51,6 +54,11 @@
 		serverProxy.exitRoom($userStore.username)
 		goto('/')
 	}
+
+	const handleUserListModalClick = () => {
+		setModalTarget('user-list');
+		setModalOpen();
+	}
 	
 </script>
 
@@ -61,14 +69,39 @@
 	</div>
 	<div class="flex flex-col gap-3 flex-1 bg-amber-50-50 pt-2 pb-2 pl-3 pr-3 bg-zinc-100">
 		{#each chats as { isMine, message, name } , i (i)}
-			<ChatBox message={message} isMine={isMine} sender={name} />
+			{#if name === 'admin'}
+				<div class="text-sm text-center text-zinc-500">{message}</div>
+			{:else}
+				<ChatBox message={message} isMine={isMine} sender={name} />
+			{/if}
+			
 		{/each}
 	</div>
 	<div class="p-2 flex items-center">
-		<div class="icon"><GiBackup /></div>
+		<div class="icon relative" on:click={handleUserListModalClick}>
+			<span class="badge">{$roomStore.participants.length}</span>
+			<GiBackup />
+		</div>
 		<div class="border-l border-l-gray-400 m-1" />
 		<Input bind:value class="flex-1" />
 		<div class="border-l border-l-gray-400 m-1" />
 		<Button on:click={onSendMessage}>전송</Button>
 	</div>
 </div>
+
+<style>
+	.badge {
+		position: absolute;
+		width: 14px;
+		height: 14px;
+		border-radius: 14px;
+		top: -7px;
+		right: -7px;
+		font-size: 8px;
+		text-align: center;
+		line-height: 14px;
+		color: white;
+		@apply bg-blue-400;
+		@apply shadow-md;		
+	}
+</style>

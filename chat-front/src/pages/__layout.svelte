@@ -1,6 +1,7 @@
 <script>
-	import CreateRoomModal from '$components/common/modals/CreateRoomModal.svelte';
-	import CreateUserModal from '$components/common/modals/CreateUserModal.svelte';
+	import UserListModal from '$components/chat/UserListModal.svelte';
+	import CreateRoomModal from '$components/home/modals/CreateRoomModal.svelte';
+	import CreateUserModal from '$components/home/modals/CreateUserModal.svelte';
 	import { modalStore, setModalClose } from '$stores/modal';
 </script>
 
@@ -10,7 +11,7 @@
 
 <CreateUserModal />
 <CreateRoomModal />
-
+<UserListModal />
 <div
 	id="wrapper"
 	on:click={setModalClose}
