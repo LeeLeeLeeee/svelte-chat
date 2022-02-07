@@ -7,7 +7,7 @@
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { setSocketClient } from '$stores/socket';
-
+	import IoMdContact from 'svelte-icons/io/IoMdContact.svelte'
 	const createUserModalOpen = () => {
 		setModalTarget('create-user');
 		setModalOpen();
@@ -45,6 +45,14 @@
 
 	{:else}
 		<Button on:click={createRoomModalOpen}>방 생성</Button>
+		<div class="flex items-center">
+			<div class="icon">
+				<IoMdContact />
+			</div>
+			<span style={'height: 20px; line-height:20px'} class="text-sm">
+				{$userStore.username}님
+			</span>
+		</div>
 		<Dropdown
 			listItemKey={{ id: 'roomId', label: 'roomName' }}
 			label="참여한 방 목록"
