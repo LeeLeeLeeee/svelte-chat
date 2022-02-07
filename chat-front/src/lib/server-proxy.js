@@ -5,6 +5,11 @@ class ServerProxy {
         axios.defaults.headers.common['Content-Type'] = 'application/json'
     }
 
+    objectToParams(object) {
+        if (typeof object !== 'object') return ''
+        return Object.keys(object).reduce((pv, key, ci) => ci === 0 ? `?${key}=${object[key]}` : `${pv}&${key}=${object[key]}`,'');
+    }
+
     async createRoom(roomId, roomName) {
         try {
             const { status, data } = await axios.post(`/room/create`, {
@@ -20,9 +25,9 @@ class ServerProxy {
         }
     }
 
-    async getRoomList() {
+    async getRoomList(query) {
         try {
-            const { status, data } = await axios.get('/room');
+            const { status, data } = await axios.get(`/room${this.objectToParams(query)}`);
             if (status !== 200) {
                 throw new Error(data.msg)
             } 

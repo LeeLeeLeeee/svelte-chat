@@ -9,7 +9,7 @@
 	let error = false;
 	const handleSubmit = async (roomName) => {
 		try {
-			await createRoom(roomName, $userStore.username);
+			await createRoom(roomName);
 			setModalClose();
 			value = '';
 		} catch (err) {

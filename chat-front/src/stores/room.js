@@ -22,18 +22,10 @@ const findRoom = (roomList, roomName) => {
 	return false;
 };
 
-export const createRoom = async (roomName, username) => {
+export const createRoom = async (roomName) => {
 	const roomId = uuidv4();
 	try {
-		const { data: { id, name } } = await serverProxy.createRoom(roomId, roomName);
-		roomStore.update((state) => {
-			state.roomList.push({
-				roomId: id,
-				roomName: name,
-				userCount: 0
-			})
-			return { ...state };
-		})
+		await serverProxy.createRoom(roomId, roomName);
 	} catch (error) {
 		throw new Error(error)
 	}
@@ -73,6 +65,17 @@ export const getRoomList = async () => {
 				...state,
 				roomList: data.map((room) => ({ roomId: room.id, roomName: room.name, userCount: room.countParticipant }))
 			}))
+		}
+	} catch (error) {
+		console.log(error)
+	}
+}
+
+export const getAbleParticipateRoomList = async (username) => {
+	try {
+		const { data } = await serverProxy.getRoomList({mode: 'able_participate', username });
+		if (data !== null) {
+			console.log(data);
 		}
 	} catch (error) {
 		console.log(error)

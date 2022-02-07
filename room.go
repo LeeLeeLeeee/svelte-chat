@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 )
 
 type Room struct {
@@ -9,6 +10,11 @@ type Room struct {
 	RoomName         string `json:"name"`
 	CountParticipant int    `json:"countParticipant"`
 	hub              *Hub
+}
+
+type RoomQuery struct {
+	participant string `json:"username"`
+	mode        string `json:"mode"`
 }
 
 type RoomList struct {
@@ -75,7 +81,10 @@ func (roomList *RoomList) insertRoom(room *Room) {
 	roomList.list = append(roomList.list, room)
 }
 
-func (roomList *RoomList) get() []*Room {
+func (roomList *RoomList) get(query *RoomQuery) []*Room {
+	switch query.mode {
+	case :
+	}
 	return roomList.list
 }
 
