@@ -2,7 +2,7 @@ package main
 
 import (
 	"errors"
-	"fmt"
+	"strconv"
 )
 
 type Room struct {
@@ -13,8 +13,8 @@ type Room struct {
 }
 
 type RoomQuery struct {
-	participant string `json:"username"`
-	mode        string `json:"mode"`
+	username        string `json:"username"`
+	ableParticipate string `json:"ableParticipate"`
 }
 
 type RoomList struct {
@@ -82,10 +82,22 @@ func (roomList *RoomList) insertRoom(room *Room) {
 }
 
 func (roomList *RoomList) get(query *RoomQuery) []*Room {
-	switch query.mode {
-	case :
+	if query.username != "" {
+		ok, err := strconv.ParseBool(query.ableParticipate)
+		if err != nil {
+			return roomList.list
+		}
+		client, _ := clientList.findUser(query.username)
+
+		if ok {
+			return roomList.getRoomListHaveNotUser(client)
+		} else {
+			return roomList.getRoomListHaveUser(client)
+		}
+	} else {
+		return roomList.list
 	}
-	return roomList.list
+
 }
 
 func (roomList *RoomList) findRoomHaveUser(client *Client) *Room {
@@ -95,6 +107,26 @@ func (roomList *RoomList) findRoomHaveUser(client *Client) *Room {
 		}
 	}
 	return nil
+}
+
+func (roomList *RoomList) getRoomListHaveUser(client *Client) []*Room {
+	rooms := []*Room{}
+	for _, room := range roomList.list {
+		if room.checkClientIsRegisted(client) {
+			rooms = append(rooms, room)
+		}
+	}
+	return rooms
+}
+
+func (roomList *RoomList) getRoomListHaveNotUser(client *Client) []*Room {
+	rooms := []*Room{}
+	for _, room := range roomList.list {
+		if !room.checkClientIsRegisted(client) {
+			rooms = append(rooms, room)
+		}
+	}
+	return rooms
 }
 
 // type Room struct {

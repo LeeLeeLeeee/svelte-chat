@@ -130,7 +130,7 @@ func createRoom(c echo.Context) error {
 
 func getRoomList(c echo.Context) error {
 	urlValue := c.QueryParams()
-	query := &RoomQuery{participant: urlValue.Get("username"), mode: urlValue.Get("mode")}
+	query := &RoomQuery{username: urlValue.Get("username"), ableParticipate: urlValue.Get("ableParticipate")}
 	roomList := roomList.get(query)
 
 	return c.JSON(http.StatusOK, responseFormat{
