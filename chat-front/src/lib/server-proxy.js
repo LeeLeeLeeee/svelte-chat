@@ -7,7 +7,8 @@ class ServerProxy {
 
     objectToParams(object) {
         if (typeof object !== 'object') return ''
-        return Object.keys(object).reduce((pv, key, ci) => ci === 0 ? `?${key}=${object[key]}` : `${pv}&${key}=${object[key]}`,'');
+        console.log(object);
+        return Object.keys(object).reduce((pv, key, ci) => `${pv}${ci === 0 ? '?' : '&'}${key}=${object[key]}`,'');
     }
 
     async createRoom(roomId, roomName) {

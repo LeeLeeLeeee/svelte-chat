@@ -4,7 +4,8 @@ import serverProxy from '$lib/server-proxy';
 
 export const roomStore = writable({
 	roomList: [],
-	participants: []
+	participants: [],
+	enteredRoomList: []
 });
 
 
@@ -73,9 +74,26 @@ export const getRoomList = async () => {
 
 export const getAbleParticipateRoomList = async (username) => {
 	try {
-		const { data } = await serverProxy.getRoomList({mode: 'able_participate', username });
+		const { data } = await serverProxy.getRoomList({ ableParticipate: true, username });
 		if (data !== null) {
-			console.log(data);
+			roomStore.update((state) => ({
+				...state,
+				roomList: data.map((room) => ({ roomId: room.id, roomName: room.name, userCount: room.countParticipant }))
+			}))
+		}
+	} catch (error) {
+		console.log(error)
+	}
+}
+
+export const getParticipatedRoomList = async (username) => {
+	try {
+		const { data } = await serverProxy.getRoomList({ ableParticipate: false, username });
+		if (data !== null) {
+			roomStore.update((state) => ({
+				...state,
+				enteredRoomList: data.map((room) => ({ roomId: room.id, roomName: room.name, userCount: room.countParticipant }))
+			}))
 		}
 	} catch (error) {
 		console.log(error)

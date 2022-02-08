@@ -56,7 +56,7 @@
 		<Dropdown
 			listItemKey={{ id: 'roomId', label: 'roomName' }}
 			label="참여한 방 목록"
-			list={$roomStore.roomList}
+			list={$roomStore.enteredRoomList}
 			on:listItemClick={handleRoomClick}
 		/>
 	{/if}

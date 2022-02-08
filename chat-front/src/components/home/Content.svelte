@@ -1,7 +1,7 @@
 <script>
 	import FaRedo from 'svelte-icons/fa/FaRedo.svelte'
 	import { userStore } from '$stores/user';
-	import { roomStore, getRoomList, enterRoom, getAbleParticipateRoomList } from '$stores/room';
+	import { roomStore, enterRoom, getAbleParticipateRoomList, getParticipatedRoomList } from '$stores/room';
 	import Card from '$components/common/Card';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
@@ -9,6 +9,7 @@
 	const handleCardClick = async (roomId, userName) => {
 		try {
 			await enterRoom(roomId, userName);
+			await getParticipatedRoomList($userStore.username);
 			goto(`/chat/${roomId}`);
 		} catch(error) {
 			console.log(error);
@@ -19,6 +20,13 @@
 	const handleReloadClick = () => {
 		getAbleParticipateRoomList($userStore.username);
 	}
+
+	onMount(() => {
+		if ($userStore.username !== '') {
+			getAbleParticipateRoomList($userStore.username);
+			getParticipatedRoomList($userStore.username);
+		}
+	})
 
 </script>
 
