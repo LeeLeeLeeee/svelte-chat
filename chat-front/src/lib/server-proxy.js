@@ -7,7 +7,6 @@ class ServerProxy {
 
     objectToParams(object) {
         if (typeof object !== 'object') return ''
-        console.log(object);
         return Object.keys(object).reduce((pv, key, ci) => `${pv}${ci === 0 ? '?' : '&'}${key}=${object[key]}`,'');
     }
 
@@ -50,9 +49,9 @@ class ServerProxy {
         }
     }
 
-    async exitRoom(userName) {
+    async leaveRoom(userName) {
         try {
-            const { status, data } = await axios.post(`/user/exit`, {
+            const { status, data } = await axios.post(`/user/leave`, {
                 name: userName
             })
             if (status != 200) {

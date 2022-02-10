@@ -41,7 +41,7 @@ export const enterRoom = async (roomId, userName) => {
 	}
 };
 
-export const exitRoom = (roomName, userName) => {
+export const leaveRoom = (roomName, userName) => {
 	roomStore.update((state) => {
 		try {
 			const room = findRoom(state.roomList, roomName);
