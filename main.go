@@ -39,7 +39,7 @@ func main() {
 	r.POST("/api/room/create", createRoom)
 	r.GET("/api/room/connect", connectRoom)
 	r.GET("/api/room", getRoomList)
-	r.POST("/api/user/exit", exitRoom)
+	r.POST("/api/user/leave", leaveRoom)
 	r.POST("/api/user/create", createUser)
 	r.GET("/api/user", getUser)
 	server := &http.Server{
@@ -191,7 +191,7 @@ func getUser(c echo.Context) error {
 	})
 }
 
-func exitRoom(c echo.Context) error {
+func leaveRoom(c echo.Context) error {
 	userParam := new(userParam)
 	if err := c.Bind(userParam); err != nil {
 		return c.JSON(http.StatusBadRequest, responseFormat{

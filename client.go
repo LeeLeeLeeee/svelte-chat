@@ -26,9 +26,10 @@ const (
 )
 
 type Client struct {
-	conn       *websocket.Conn
-	send       chan *BroadCastMessage
-	ClientName string
+	conn                  *websocket.Conn
+	send                  chan *BroadCastMessage
+	ClientName            string
+	ParticipatedRoomIDLst []string
 }
 
 type ClientList struct {

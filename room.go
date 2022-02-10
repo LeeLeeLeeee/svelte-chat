@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"strconv"
 )
 
@@ -26,22 +27,38 @@ func newRoomList() *RoomList {
 }
 
 func (room *Room) register(client *Client) {
-	if !room.checkClientIsRegisted(client) {
+
+	if !room.checkClientIsConnected(client) {
 		room.hub.register <- client
 		room.CountParticipant += 1
+		client.ParticipatedRoomIDLst = append(client.ParticipatedRoomIDLst, room.RoomId)
 	}
+	fmt.Println(room.checkClientIsRegisted(client))
 }
 
 func (room *Room) unregister(client *Client) {
-	if room.checkClientIsRegisted(client) {
+	if room.checkClientIsConnected(client) {
 		room.hub.unregister <- client
 		room.CountParticipant -= 1
+		/* roomIndex := FindIndex(client.ParticipatedRoomIDLst, func(value interface{}) bool {
+			return room.RoomId == value
+		})
+		if roomIndex != -1 {
+			RemoveItemOfSlice(client.ParticipatedRoomIDLst, roomIndex)
+		} */
 	}
 }
 
-func (room *Room) checkClientIsRegisted(client *Client) bool {
+func (room *Room) checkClientIsConnected(client *Client) bool {
 	_, ok := room.hub.clients[client]
 	return ok
+}
+
+func (room *Room) checkClientIsRegisted(client *Client) bool {
+	roomIndex := FindIndex(client.ParticipatedRoomIDLst, func(value interface{}) bool {
+		return room.RoomId == value
+	})
+	return roomIndex != -1
 }
 
 func (room *Room) getParticipatedClient() []string {
@@ -102,7 +119,7 @@ func (roomList *RoomList) get(query *RoomQuery) []*Room {
 
 func (roomList *RoomList) findRoomHaveUser(client *Client) *Room {
 	for _, room := range roomList.list {
-		if room.checkClientIsRegisted(client) {
+		if room.checkClientIsConnected(client) {
 			return room
 		}
 	}
