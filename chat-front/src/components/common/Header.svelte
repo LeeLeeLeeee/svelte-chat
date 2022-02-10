@@ -58,6 +58,7 @@
 			label="참여한 방 목록"
 			list={$roomStore.enteredRoomList}
 			on:listItemClick={handleRoomClick}
+			on:rightClick={() => console.log('aaa')}
 		/>
 	{/if}
 </div>

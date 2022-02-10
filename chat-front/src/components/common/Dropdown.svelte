@@ -2,25 +2,34 @@
 	import { slide } from '$animations/slide';
 	import GoChevronDown from 'svelte-icons/go/GoChevronDown.svelte';
 	import { createEventDispatcher } from 'svelte';
+	import ContextBox from './ContextBox.svelte';
 
 	export let label = '';
 	export let list = [];
 	export let listItemKey = { id: '', label: '' };
+	let drowDownList;
 
 	let isOpen = false;
-
+	let isConetextOpen = false;
+	let contextPosition = { x: 0, y: 0 }
 	const dispatch = createEventDispatcher();
 
 	function handleClick(param) {
 		dispatch('listItemClick', { param });
 	}
 
+	function handleRightClick(e) {
+		contextPosition = { x: e.clientX, y: e.clientY };
+		isConetextOpen = true;
+		dispatch('rightClick');
+	}
+
 	function closeDropDownItem(event) {
-		for (const node of document.getElementsByClassName('drop-down-list')) {
-			if (!node.contains(event.target)) {
-				isOpen = false;
-				break;
-			}
+		if(!drowDownList) return
+		const { target } = event;
+		if(!drowDownList.contains(target)) {
+			isOpen = false;
+			isConetextOpen = false;
 		}
 	}
 </script>
@@ -35,23 +44,29 @@
 	{#if !isOpen}
 		<!-- <span class="ping-dot animate-ping absolute rounded-full bg-red-500" /> -->
 	{/if}
+	{#if isConetextOpen}
+		<ContextBox {...contextPosition}>
+			aaaaaaa
+		</ContextBox>
+	{/if}
 	<span class="text-sm">{label}</span>
 	<div class="icon rounded-full"><GoChevronDown /></div>
 	{#if isOpen}
 		<ul
 			in:slide={{ duration: 100 }}
 			out:slide={{ duration: 100 }}
+			bind:this={drowDownList}
 			class="drop-down-list absolute text-xs drop-shadow-md bg-white p-2 rounded-md border border-gray-300"
 		>
 			{#if typeof list[0] === 'object'}
 				{#each list as item (item[listItemKey.id])}
-					<li on:click={() => handleClick(item[listItemKey.id])}>
+					<li on:click|stopPropagation={() => handleClick(item[listItemKey.id])} on:contextmenu|preventDefault={handleRightClick}>
 						{item[listItemKey.label]}
 					</li>
 				{/each}
 			{:else}
 				{#each list as item}
-					<li on:click={() => handleClick(item)}>
+					<li on:click={() => handleClick(item)} on:contextmenu|preventDefault={handleRightClick}>
 						{item}
 					</li>
 				{/each}

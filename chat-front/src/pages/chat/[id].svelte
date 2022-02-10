@@ -50,8 +50,8 @@
 		value = '';
 	}
 
-	let handleExitRoom = () => {
-		serverProxy.exitRoom($userStore.username)
+	let handleLeaveRoom = () => {
+		serverProxy.leaveRoom($userStore.username)
 		goto('/')
 	}
 
@@ -65,7 +65,7 @@
 <div class="flex flex-col h-full rounded-lg">
 	<div class="border-b border-b-gray-300 p-2 flex justify-between items-center">
 		<span>{$time}</span>
-		<div on:click={handleExitRoom} class="icon"><GoSignOut /></div>
+		<div on:click={handleLeaveRoom} class="icon"><GoSignOut /></div>
 	</div>
 	<div class="flex flex-col gap-3 flex-1 bg-amber-50-50 pt-2 pb-2 pl-3 pr-3 bg-zinc-100">
 		{#each chats as { isMine, message, name } , i (i)}
