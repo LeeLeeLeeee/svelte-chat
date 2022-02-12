@@ -2,16 +2,15 @@
 	import { slide } from '$animations/slide';
 	import GoChevronDown from 'svelte-icons/go/GoChevronDown.svelte';
 	import { createEventDispatcher } from 'svelte';
-	import ContextBox from './ContextBox.svelte';
-
+import { setPosition } from '$stores/context';
 	export let label = '';
+
 	export let list = [];
 	export let listItemKey = { id: '', label: '' };
 	let drowDownList;
 
 	let isOpen = false;
-	let isConetextOpen = false;
-	let contextPosition = { x: 0, y: 0 }
+
 	const dispatch = createEventDispatcher();
 
 	function handleClick(param) {
@@ -19,8 +18,8 @@
 	}
 
 	function handleRightClick(e) {
-		contextPosition = { x: e.clientX, y: e.clientY };
-		isConetextOpen = true;
+		const contextPosition = { x: e.clientX, y: e.clientY };
+		setPosition(contextPosition);
 		dispatch('rightClick');
 	}
 
@@ -29,25 +28,21 @@
 		const { target } = event;
 		if(!drowDownList.contains(target)) {
 			isOpen = false;
-			isConetextOpen = false;
 		}
 	}
 </script>
 
 <svelte:window on:click={closeDropDownItem} />
+
 <div
-	on:click|stopPropagation={() => {
+	on:click={() => {
 		isOpen = !isOpen;
 	}}
+	bind:this={drowDownList}
 	class="relative cursor-pointer flex rounded-md items-center gap-3 border border-gray-300 pt-1 pb-1 pl-2 pr-2"
 >
 	{#if !isOpen}
 		<!-- <span class="ping-dot animate-ping absolute rounded-full bg-red-500" /> -->
-	{/if}
-	{#if isConetextOpen}
-		<ContextBox {...contextPosition}>
-			aaaaaaa
-		</ContextBox>
 	{/if}
 	<span class="text-sm">{label}</span>
 	<div class="icon rounded-full"><GoChevronDown /></div>
@@ -55,12 +50,11 @@
 		<ul
 			in:slide={{ duration: 100 }}
 			out:slide={{ duration: 100 }}
-			bind:this={drowDownList}
 			class="drop-down-list absolute text-xs drop-shadow-md bg-white p-2 rounded-md border border-gray-300"
 		>
 			{#if typeof list[0] === 'object'}
 				{#each list as item (item[listItemKey.id])}
-					<li on:click|stopPropagation={() => handleClick(item[listItemKey.id])} on:contextmenu|preventDefault={handleRightClick}>
+					<li on:click={() => handleClick(item[listItemKey.id])} on:contextmenu|preventDefault={handleRightClick}>
 						{item[listItemKey.label]}
 					</li>
 				{/each}

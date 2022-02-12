@@ -1,5 +1,6 @@
 <script>
 	import UserListModal from '$components/chat/UserListModal.svelte';
+	import ContextBox from '$components/common/ContextBox.svelte';
 	import CreateRoomModal from '$components/home/modals/CreateRoomModal.svelte';
 	import CreateUserModal from '$components/home/modals/CreateUserModal.svelte';
 	import { modalStore, setModalClose } from '$stores/modal';
@@ -12,6 +13,9 @@
 <CreateUserModal />
 <CreateRoomModal />
 <UserListModal />
+<ContextBox contextID='roomListContext'>
+	<b class="text-red-600">삭제</b>
+</ContextBox>
 <div
 	id="wrapper"
 	on:click={setModalClose}

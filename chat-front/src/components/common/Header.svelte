@@ -8,6 +8,7 @@
 	import { onMount } from 'svelte';
 	import { setSocketClient } from '$stores/socket';
 	import IoMdContact from 'svelte-icons/io/IoMdContact.svelte'
+	import { setContextOpen, setContextTarget } from '$stores/context';
 	const createUserModalOpen = () => {
 		setModalTarget('create-user');
 		setModalOpen();
@@ -29,9 +30,16 @@
 		setSocketClient(userName)
 	}
 
+	const handleContextMenu = ({ detail }) => {
+		// const { param: roomId } = detail;
+		setContextTarget('roomListContext')
+		setContextOpen();
+	}
+
 	onMount(() => {
 		getNotAssignedUserNameList()
 	})
+
 </script>
 
 <div class="p-2 shadow-sm z-10 relative flex justify-between">
@@ -58,7 +66,7 @@
 			label="참여한 방 목록"
 			list={$roomStore.enteredRoomList}
 			on:listItemClick={handleRoomClick}
-			on:rightClick={() => console.log('aaa')}
+			on:rightClick={handleContextMenu}
 		/>
 	{/if}
 </div>

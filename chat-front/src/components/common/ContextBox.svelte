@@ -1,27 +1,43 @@
 <script>
-    import { createEventDispatcher } from 'svelte';
+    import { onDestroy } from 'svelte';
     import { fade } from 'svelte/transition';
-    export let x = 0;
-    export let y = 0;
+    import { contextStore, setContextClose } from '$stores/context';
+
+    
+    export let contextID = '';
     let contextElement;
-    const dispatch = createEventDispatcher();
-    $: (() => {
+    let x = 0;
+    let y = 0
+
+    $: ((a) => {
+        
         if (!contextElement) return;
 
         const rect = contextElement.getBoundingClientRect();
-        console.log(window.innerWidth, rect.width)
-		x = Math.min(window.innerWidth - rect.width, x);
-		if (y > (window.innerHeight - rect.height)) {
+		x = Math.min(window.innerWidth - rect.width, $contextStore.x);
+		if ($contextStore.y > (window.innerHeight - rect.height)) {
             y -= rect.height;
+        } else {
+            y = $contextStore.y
         }
-    })(x, y);
-
+    })();
     
-
+    
+	let isContext = false;
+    
+	const unsubscribe = contextStore.subscribe((status) => {
+		isContext = status.isOpen && status.target === contextID;
+	});
+    
+	onDestroy(() => {
+		unsubscribe();
+	});
+    
     function onOutSidePageClick(e) {
         const { target } = e;
+        if (!contextElement) return;
         if (target === contextElement || contextElement.contains(target)) return;
-        dispatch('clickoutside');
+        setContextClose();
     }
 
 </script>
@@ -31,10 +47,12 @@
         display: grid;
         background-color: white;
         z-index: 90;
-        @apply p-2 rounded-md bg-white border-gray-300;
+        @apply p-2 rounded-md bg-gray-100 border border-gray-300 text-sm;
     }
 </style>
 <svelte:window on:click={onOutSidePageClick} />
-<div transition:fade={{ duration: 100 }} bind:this={contextElement} style="top: {y}px; left: {x}px;">
-    <slot />
-</div>
+{#if isContext}
+    <div transition:fade={{ duration: 90 }} bind:this={contextElement} style="top: {y}px; left: {x}px;">
+        <slot />
+    </div>
+{/if}

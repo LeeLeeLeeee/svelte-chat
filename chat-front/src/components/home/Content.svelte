@@ -4,7 +4,7 @@
 	import { roomStore, enterRoom, getAbleParticipateRoomList, getParticipatedRoomList } from '$stores/room';
 	import Card from '$components/common/Card';
 	import { goto } from '$app/navigation';
-	import { onMount } from 'svelte';
+	import { socketStore } from '$stores/socket';
 	
 	const handleCardClick = async (roomId, userName) => {
 		try {
@@ -21,13 +21,12 @@
 		getAbleParticipateRoomList($userStore.username);
 	}
 
-	onMount(() => {
-		if ($userStore.username !== '') {
+	socketStore.subscribe((state) => {
+		if(state.socketClient) {
 			getAbleParticipateRoomList($userStore.username);
 			getParticipatedRoomList($userStore.username);
 		}
 	})
-
 </script>
 
 <div class="flex-1 flex flex-col bg-slate-50">
