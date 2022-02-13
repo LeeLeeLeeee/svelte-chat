@@ -59,7 +59,7 @@ func (c *Client) read() {
 		if participatedRoom == nil {
 			participatedRoom = roomList.findRoomHaveUser(c)
 		} else {
-			if !participatedRoom.checkClientIsRegisted(c) {
+			if ok, _ := participatedRoom.checkClientIsRegisted(c); ok {
 				participatedRoom = roomList.findRoomHaveUser(c)
 			}
 		}
@@ -134,6 +134,15 @@ func packMessageWithUser(name string, message string) map[string]interface{} {
 	return packedMessage
 }
 
+func (c *Client) exitRoom(roomIndex int) bool {
+	deletedRoomList, ok := RemoveItemOfSlice(c.ParticipatedRoomIDLst, roomIndex).([]string)
+	if !ok {
+		return false
+	}
+	c.ParticipatedRoomIDLst = deletedRoomList
+	return true
+}
+
 func (cli *ClientList) createClient(name string) (*Client, error) {
 	if !cli.checkDuplicated(name) {
 		client := &Client{conn: nil, send: make(chan *BroadCastMessage), ClientName: name}
@@ -163,7 +172,6 @@ func (cli *ClientList) checkDuplicated(name string) bool {
 
 func (cli *ClientList) getClientUserName() []string {
 	clientNameList := []string{}
-	fmt.Print("user")
 	for _, client := range cli.list {
 		clientNameList = append(clientNameList, client.ClientName)
 	}

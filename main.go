@@ -26,6 +26,11 @@ type roomParam struct {
 	Name string `json:"name"`
 }
 
+type userRoomParam struct {
+	UserName string `json:"name"`
+	RoomId   string `json:"roomId"`
+}
+
 var (
 	roomList   = newRoomList()
 	addr       = flag.String("addr", ":19123", "http service address")
@@ -39,7 +44,8 @@ func main() {
 	r.POST("/api/room/create", createRoom)
 	r.GET("/api/room/connect", connectRoom)
 	r.GET("/api/room", getRoomList)
-	r.POST("/api/user/leave", leaveRoom)
+	r.PATCH("/api/user/leave", leaveRoom)
+	r.PATCH("/api/user/exit", exitRoom)
 	r.POST("/api/user/create", createUser)
 	r.GET("/api/user", getUser)
 	server := &http.Server{
@@ -192,30 +198,78 @@ func getUser(c echo.Context) error {
 }
 
 func leaveRoom(c echo.Context) error {
-	userParam := new(userParam)
-	if err := c.Bind(userParam); err != nil {
+	param := new(userRoomParam)
+	if err := c.Bind(param); err != nil {
 		return c.JSON(http.StatusBadRequest, responseFormat{
 			StatusCode: http.StatusBadRequest,
 			Message:    "bad request",
 		})
 	}
-	if userParam.Name == "" {
+	if param.UserName == "" {
 		return c.JSON(http.StatusBadRequest, responseFormat{
 			StatusCode: http.StatusBadRequest,
 			Message:    "userName is blanck",
 		})
 	}
-	user, err := clientList.findUser(userParam.Name)
+	user, err := clientList.findUser(param.UserName)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, responseFormat{
 			StatusCode: http.StatusInternalServerError,
 			Message:    "can't find user",
 		})
 	}
+
 	room := roomList.findRoomHaveUser(user)
 
-	if room != nil {
-		room.unregister(user)
+	if room.RoomId != param.RoomId || room == nil {
+		return c.JSON(http.StatusInternalServerError, responseFormat{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "can't find matched room for delete",
+		})
+	}
+
+	room.unregister(user)
+
+	return c.JSON(http.StatusOK, responseFormat{
+		StatusCode: http.StatusOK,
+		Message:    "ok",
+	})
+}
+
+func exitRoom(c echo.Context) error {
+	param := new(userRoomParam)
+	if err := c.Bind(param); err != nil {
+		return c.JSON(http.StatusBadRequest, responseFormat{
+			StatusCode: http.StatusBadRequest,
+			Message:    "bad request",
+		})
+	}
+	if param.UserName == "" {
+		return c.JSON(http.StatusBadRequest, responseFormat{
+			StatusCode: http.StatusBadRequest,
+			Message:    "userName is blanck",
+		})
+	}
+
+	user, err := clientList.findUser(param.UserName)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, responseFormat{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "can't find user",
+		})
+	}
+	room, err := roomList.findRoom(param.RoomId)
+
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, responseFormat{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "can't find room",
+		})
+	}
+
+	if ok, roomIndex := room.checkClientIsRegisted(user); ok {
+		user.exitRoom(roomIndex)
 	}
 
 	return c.JSON(http.StatusOK, responseFormat{

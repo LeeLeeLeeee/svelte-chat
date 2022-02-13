@@ -32,11 +32,12 @@ func FindIndex(slice interface{}, f func(value interface{}) bool) int {
 	return -1
 }
 
-func RemoveItemOfSlice(slice interface{}, i int) {
-	s := reflect.ValueOf(slice).Elem()
+func RemoveItemOfSlice(slice interface{}, i int) interface{} {
+	s := reflect.ValueOf(slice)
 	if s.Kind() == reflect.Slice {
 		s = reflect.AppendSlice(s.Slice(0, i), s.Slice(i+1, s.Len()))
 	}
+	return s.Interface()
 }
 
 func ConnectWebSocket(w *echo.Response, r *http.Request) (*websocket.Conn, error) {

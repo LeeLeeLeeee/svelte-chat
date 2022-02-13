@@ -40,12 +40,6 @@ func (room *Room) unregister(client *Client) {
 	if room.checkClientIsConnected(client) {
 		room.hub.unregister <- client
 		room.CountParticipant -= 1
-		/* roomIndex := FindIndex(client.ParticipatedRoomIDLst, func(value interface{}) bool {
-			return room.RoomId == value
-		})
-		if roomIndex != -1 {
-			RemoveItemOfSlice(client.ParticipatedRoomIDLst, roomIndex)
-		} */
 	}
 }
 
@@ -54,11 +48,11 @@ func (room *Room) checkClientIsConnected(client *Client) bool {
 	return ok
 }
 
-func (room *Room) checkClientIsRegisted(client *Client) bool {
+func (room *Room) checkClientIsRegisted(client *Client) (bool, int) {
 	roomIndex := FindIndex(client.ParticipatedRoomIDLst, func(value interface{}) bool {
 		return room.RoomId == value
 	})
-	return roomIndex != -1
+	return roomIndex != -1, roomIndex
 }
 
 func (room *Room) getParticipatedClient() []string {
@@ -129,7 +123,7 @@ func (roomList *RoomList) findRoomHaveUser(client *Client) *Room {
 func (roomList *RoomList) getRoomListHaveUser(client *Client) []*Room {
 	rooms := []*Room{}
 	for _, room := range roomList.list {
-		if room.checkClientIsRegisted(client) {
+		if ok, _ := room.checkClientIsRegisted(client); ok {
 			rooms = append(rooms, room)
 		}
 	}
@@ -139,7 +133,7 @@ func (roomList *RoomList) getRoomListHaveUser(client *Client) []*Room {
 func (roomList *RoomList) getRoomListHaveNotUser(client *Client) []*Room {
 	rooms := []*Room{}
 	for _, room := range roomList.list {
-		if !room.checkClientIsRegisted(client) {
+		if ok, _ := room.checkClientIsRegisted(client); !ok {
 			rooms = append(rooms, room)
 		}
 	}
