@@ -2,14 +2,15 @@
 	import Button from '$components/common/Button';
 	import Modal from '$components/common/Modal';
 	import Input from '$components/common/Input';
-	import { userStore } from '$stores/user';
 	import { setModalClose } from '$stores/modal';
 	import { createRoom } from '$stores/room';
+	import { insertToast } from '$stores/toast';
 	let value = '';
 	let error = false;
 	const handleSubmit = async (roomName) => {
 		try {
 			await createRoom(roomName);
+			insertToast('success', '방이 성공적으로 생성되었습니다.\n참여가능한 방 목록 우측의 새로고침 버튼을 클릭하여 방 목록을 불러오세요!');
 			setModalClose();
 			value = '';
 		} catch (err) {

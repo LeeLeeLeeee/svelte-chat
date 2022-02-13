@@ -6,6 +6,7 @@
 	import { modalStore, setModalClose } from '$stores/modal';
 	import { contextStore } from '$stores/context';
 	import { exitRoom } from '$stores/user';
+	import ToastList from '$components/common/ToastList.svelte';
 
 	function handleClick() {
 		const { roomId } = $contextStore.props;
@@ -24,6 +25,7 @@
 <ContextBox contextID='roomListContext'>
 	<b on:click={handleClick} class="text-red-600 cursor-default">삭제</b>
 </ContextBox>
+<ToastList />
 <div
 	id="wrapper"
 	on:click={setModalClose}

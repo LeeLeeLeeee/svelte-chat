@@ -5,6 +5,7 @@
 	import { createUserName } from '$stores/user';
 	import { setModalClose } from '$stores/modal';
 	import { setSocketClient } from '$stores/socket';
+	import { insertToast } from '$stores/toast';
 	let value = '';
 	let error = false;
 	const handleSubmit = async (name) => {
@@ -12,6 +13,7 @@
 			await createUserName(name);
 			setSocketClient(name)
 			setModalClose();
+			insertToast('success', '유저가 성공적으로 생성되었습니다.');
 			value = '';
 		} catch (err) {
 			console.log(err);
