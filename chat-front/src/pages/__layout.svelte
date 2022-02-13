@@ -22,7 +22,7 @@
 <CreateRoomModal />
 <UserListModal />
 <ContextBox contextID='roomListContext'>
-	<b on:click={handleClick} class="text-red-600">삭제</b>
+	<b on:click={handleClick} class="text-red-600 cursor-default">삭제</b>
 </ContextBox>
 <div
 	id="wrapper"

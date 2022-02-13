@@ -31,13 +31,16 @@
 			goto("/")
 		}
 		if( $socketStore.socketClient === null ) {
-			sc = new SocketClient($userStore.username, 'aaa');
+			sc = new SocketClient($userStore.username);
 			setSocketClient(sc);
 		} else {
 			sc = $socketStore.socketClient;
 		}
 		sc.onListenHandler((e) => {
 			const { To: username, Message: message} = JSON.parse(e.data)
+			if( username === 'admin') {
+				getParticipatedClient(roomId);
+			}
 			chats = [...chats, { message: message, isMine: false, name: username}]
 		})
 		getParticipatedClient(roomId);
@@ -50,7 +53,8 @@
 	}
 
 	let handleLeaveRoom = async () => {
-		leaveRoom(roomId);
+		await leaveRoom(roomId);
+		// closeSocketClient();
 		goto('/')
 	}
 

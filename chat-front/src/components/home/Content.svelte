@@ -9,7 +9,6 @@
 	const handleCardClick = async (roomId, userName) => {
 		try {
 			await enterRoom(roomId, userName);
-			await getParticipatedRoomList($userStore.username);
 			goto(`/chat/${roomId}`);
 		} catch(error) {
 			console.log(error);

@@ -221,7 +221,14 @@ func leaveRoom(c echo.Context) error {
 
 	room := roomList.findRoomHaveUser(user)
 
-	if room.RoomId != param.RoomId || room == nil {
+	if room == nil {
+		return c.JSON(http.StatusInternalServerError, responseFormat{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "can't find matched room for delete",
+		})
+	}
+
+	if room.RoomId != param.RoomId {
 		return c.JSON(http.StatusInternalServerError, responseFormat{
 			StatusCode: http.StatusInternalServerError,
 			Message:    "can't find matched room for delete",

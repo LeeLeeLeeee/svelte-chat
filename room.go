@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 )
 
@@ -33,7 +32,6 @@ func (room *Room) register(client *Client) {
 		room.CountParticipant += 1
 		client.ParticipatedRoomIDLst = append(client.ParticipatedRoomIDLst, room.RoomId)
 	}
-	fmt.Println(room.checkClientIsRegisted(client))
 }
 
 func (room *Room) unregister(client *Client) {

@@ -2,7 +2,7 @@
 	import Button from '$components/common/Button';
 	import { setModalOpen, setModalTarget } from '$stores/modal';
 	import { getNotAssignedUserNameList, setUserName, userStore } from '$stores/user';
-	import { roomStore } from '$stores/room';
+	import { roomStore, enterRoom } from '$stores/room';
 	import Dropdown from './Dropdown.svelte';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
@@ -19,8 +19,9 @@
 		setModalOpen();
 	};
 
-	const handleRoomClick = ({ detail }) => {
+	const handleRoomClick = async ({ detail }) => {
 		const { props: roomId } = detail;
+		await enterRoom(roomId, $userStore.username);
 		goto(`chat/${roomId}`);
 	};
 
