@@ -15,6 +15,7 @@ redis를 pub-sub 기능을 활용하여 채팅방 토이 프로젝트 구축. �
 #### front
 - svelte
 - svelte-kit
+- vite
 
 #### back
 - go
