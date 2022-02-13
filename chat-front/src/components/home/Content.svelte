@@ -19,6 +19,7 @@
 
 	const handleReloadClick = () => {
 		getAbleParticipateRoomList($userStore.username);
+		getParticipatedRoomList($userStore.username);
 	}
 
 	socketStore.subscribe((state) => {

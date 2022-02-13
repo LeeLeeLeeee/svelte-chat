@@ -8,7 +8,7 @@
 	import { onMount } from 'svelte';
 	import { setSocketClient } from '$stores/socket';
 	import IoMdContact from 'svelte-icons/io/IoMdContact.svelte'
-	import { setContextOpen, setContextTarget } from '$stores/context';
+	import { setContextOpen, setContextTarget, setContextProps } from '$stores/context';
 	const createUserModalOpen = () => {
 		setModalTarget('create-user');
 		setModalOpen();
@@ -20,20 +20,21 @@
 	};
 
 	const handleRoomClick = ({ detail }) => {
-		const { param: roomId } = detail;
+		const { props: roomId } = detail;
 		goto(`chat/${roomId}`);
 	};
 
 	const handleUserClick = ({ detail }) => {
-		const { param: userName } = detail;
+		const { props: userName } = detail;
 		setUserName(userName)
 		setSocketClient(userName)
 	}
 
 	const handleContextMenu = ({ detail }) => {
-		// const { param: roomId } = detail;
+		const { props } = detail;
 		setContextTarget('roomListContext')
 		setContextOpen();
+		setContextProps(props);
 	}
 
 	onMount(() => {

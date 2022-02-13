@@ -5,7 +5,12 @@ export const contextStore = writable({
     target: '',
 	x: 0,
     y: 0,
+	props: {},
 });
+
+export const setContextProps = (props) => {
+	contextStore.update((state) => ({...state, props}))
+}
 
 export const setContextTarget = (contextId) => {
 	contextStore.update((state) => ({...state, isOpen: false, target: contextId }));

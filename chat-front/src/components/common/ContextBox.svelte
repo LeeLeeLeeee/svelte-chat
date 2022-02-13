@@ -35,8 +35,8 @@
     
     function onOutSidePageClick(e) {
         const { target } = e;
-        if (!contextElement) return;
-        if (target === contextElement || contextElement.contains(target)) return;
+        // if (!contextElement) return;
+        // if (target === contextElement || contextElement.contains(target)) return;
         setContextClose();
     }
 

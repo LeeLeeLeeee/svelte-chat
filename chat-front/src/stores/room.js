@@ -8,21 +8,6 @@ export const roomStore = writable({
 	enteredRoomList: []
 });
 
-
-const deleteUserFromRoom = (room, userName) => {
-	if (room.userList.includes(userName)) {
-		room.userList = room.userList.filter((name) => userName !== name);
-	}
-};
-
-const findRoom = (roomList, roomName) => {
-	for (const room of roomList) {
-		if (roomName !== room.roomName) continue;
-		return room;
-	}
-	return false;
-};
-
 export const createRoom = async (roomName) => {
 	const roomId = uuidv4();
 	try {
@@ -39,23 +24,6 @@ export const enterRoom = async (roomId, userName) => {
 	} catch(error) {
 		throw new Error(error)
 	}
-};
-
-export const leaveRoom = (roomName, userName) => {
-	roomStore.update((state) => {
-		try {
-			const room = findRoom(state.roomList, roomName);
-			deleteUserFromRoom(room, userName);
-		} finally {
-			return { ...state };
-		}
-	});
-};
-
-export const deleteRoom = (roomName) => {
-	roomStore.update((state) => ({
-		roomList: state.roomList.filter((room) => room.roomName !== roomName)
-	}));
 };
 
 export const getRoomList = async () => {

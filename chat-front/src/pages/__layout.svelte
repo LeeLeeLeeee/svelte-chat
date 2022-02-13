@@ -4,6 +4,14 @@
 	import CreateRoomModal from '$components/home/modals/CreateRoomModal.svelte';
 	import CreateUserModal from '$components/home/modals/CreateUserModal.svelte';
 	import { modalStore, setModalClose } from '$stores/modal';
+	import { contextStore } from '$stores/context';
+	import { exitRoom } from '$stores/user';
+
+	function handleClick() {
+		const { roomId } = $contextStore.props;
+		exitRoom(roomId)
+	}
+
 </script>
 
 <div class="w-4/12 mx-auto h-full drop-shadow-md rounded-md bg-white flex flex-col">
@@ -14,7 +22,7 @@
 <CreateRoomModal />
 <UserListModal />
 <ContextBox contextID='roomListContext'>
-	<b class="text-red-600">삭제</b>
+	<b on:click={handleClick} class="text-red-600">삭제</b>
 </ContextBox>
 <div
 	id="wrapper"

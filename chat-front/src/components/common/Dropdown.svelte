@@ -13,14 +13,14 @@ import { setPosition } from '$stores/context';
 
 	const dispatch = createEventDispatcher();
 
-	function handleClick(param) {
-		dispatch('listItemClick', { param });
+	function handleClick(props) {
+		dispatch('listItemClick', { props });
 	}
 
-	function handleRightClick(e) {
+	function handleRightClick(e, props) {
 		const contextPosition = { x: e.clientX, y: e.clientY };
 		setPosition(contextPosition);
-		dispatch('rightClick');
+		dispatch('rightClick', { props });
 	}
 
 	function closeDropDownItem(event) {
@@ -54,13 +54,13 @@ import { setPosition } from '$stores/context';
 		>
 			{#if typeof list[0] === 'object'}
 				{#each list as item (item[listItemKey.id])}
-					<li on:click={() => handleClick(item[listItemKey.id])} on:contextmenu|preventDefault={handleRightClick}>
+					<li on:click={() => handleClick(item[listItemKey.id])} on:contextmenu|preventDefault={(e) => handleRightClick(e, item)}>
 						{item[listItemKey.label]}
 					</li>
 				{/each}
 			{:else}
 				{#each list as item}
-					<li on:click={() => handleClick(item)} on:contextmenu|preventDefault={handleRightClick}>
+					<li on:click={() => handleClick(item)} on:contextmenu|preventDefault={(e) => handleRightClick(e, item)}>
 						{item}
 					</li>
 				{/each}

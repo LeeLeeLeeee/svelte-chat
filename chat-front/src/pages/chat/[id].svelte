@@ -16,10 +16,9 @@
 	import ChatBox from '$components/chat/ChatBox.svelte';
 	import { setSocketClient, socketStore } from '$stores/socket';
 	import { onMount } from 'svelte';
-	import { userStore } from '$stores/user';
+	import { userStore, leaveRoom } from '$stores/user';
 	import SocketClient from '$lib/socket';
 	import { goto } from '$app/navigation';
-	import serverProxy from '$lib/server-proxy';
 	import { getParticipatedClient, roomStore } from '$stores/room';
 	import { setModalOpen, setModalTarget } from '$stores/modal';
 	
@@ -50,8 +49,8 @@
 		value = '';
 	}
 
-	let handleLeaveRoom = () => {
-		serverProxy.leaveRoom($userStore.username)
+	let handleLeaveRoom = async () => {
+		leaveRoom(roomId);
 		goto('/')
 	}
 

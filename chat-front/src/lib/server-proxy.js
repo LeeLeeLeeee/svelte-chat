@@ -49,16 +49,31 @@ class ServerProxy {
         }
     }
 
-    async leaveRoom(userName) {
+    async leaveRoom(userName, roomId) {
         try {
-            const { status, data } = await axios.post(`/user/leave`, {
-                name: userName
+            const { status, data } = await axios.patch(`/user/leave`, {
+                name: userName,
+                roomId: roomId,
             })
             if (status != 200) {
                 throw new Error(data.msg)
             }
         } catch(error) {
             throw new Error(error)
+        }
+    }
+
+    async exitRoom(userName, roomId) {
+        try {
+            const { status, data } = await axios.patch(`/user/exit`, {
+                name: userName,
+                roomId: roomId,
+            })
+            if (status !== 200) {
+                throw new Error(data.msg);
+            }
+        } catch(error) {
+            throw new Error(error);
         }
     }
 

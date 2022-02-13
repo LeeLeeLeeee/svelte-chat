@@ -1,4 +1,4 @@
-import { writable } from 'svelte/store';
+import { writable, get } from 'svelte/store';
 import serverProxy from '$lib/server-proxy';
 
 export const userStore = writable({
@@ -27,4 +27,14 @@ export const getNotAssignedUserNameList = async () => {
 	} catch(error) {
 		console.log(error);
 	}
+}
+
+export const leaveRoom = async (roomId) => {
+	const { username } = get(userStore);
+	await serverProxy.leaveRoom(username, roomId);
+}
+
+export const exitRoom = async (roomId) => {
+	const { username } = get(userStore);
+	await serverProxy.exitRoom(username, roomId)
 }
