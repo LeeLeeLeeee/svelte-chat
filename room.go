@@ -34,9 +34,9 @@ func (room *Room) register(client *Client) {
 	}
 }
 
-func (room *Room) unregister(client *Client) {
+func (room *Room) disconnect(client *Client) {
 	if room.checkClientIsConnected(client) {
-		room.hub.unregister <- client
+		room.hub.disconnect <- client
 		room.CountParticipant -= 1
 	}
 }
@@ -56,7 +56,9 @@ func (room *Room) checkClientIsRegisted(client *Client) (bool, int) {
 func (room *Room) getParticipatedClient() []string {
 	clientNameList := []string{}
 	for client := range room.hub.clients {
-		clientNameList = append(clientNameList, client.ClientName)
+		if room.hub.clients[client] {
+			clientNameList = append(clientNameList, client.ClientName)
+		}
 	}
 	return clientNameList
 }

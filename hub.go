@@ -9,6 +9,7 @@ type Hub struct {
 	clients    map[*Client]bool
 	broadcast  chan *BroadCastMessage
 	register   chan *Client
+	disconnect chan *Client
 	unregister chan *Client
 }
 
@@ -16,7 +17,7 @@ func newHub() *Hub {
 	return &Hub{
 		broadcast:  make(chan *BroadCastMessage),
 		register:   make(chan *Client),
-		unregister: make(chan *Client),
+		disconnect: make(chan *Client),
 		clients:    make(map[*Client]bool),
 	}
 }
@@ -47,12 +48,16 @@ func (h *Hub) run() {
 		case client := <-h.register:
 			h.notifyWelcome(client)
 			h.clients[client] = true
-		case client := <-h.unregister:
+		case client := <-h.disconnect:
 			h.notifyLeave(client)
+			if _, ok := h.clients[client]; ok {
+				h.clients[client] = false
+			}
+		case client := <-h.unregister:
 			delete(h.clients, client)
 		case message := <-h.broadcast:
 			for client := range h.clients {
-				if client.ClientName == message.To {
+				if client.ClientName == message.To || !h.clients[client] {
 					continue
 				}
 				select {

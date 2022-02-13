@@ -235,7 +235,7 @@ func leaveRoom(c echo.Context) error {
 		})
 	}
 
-	room.unregister(user)
+	room.disconnect(user)
 
 	return c.JSON(http.StatusOK, responseFormat{
 		StatusCode: http.StatusOK,
