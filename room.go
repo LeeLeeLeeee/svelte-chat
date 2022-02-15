@@ -83,7 +83,7 @@ func (room *Room) run() {
 					continue
 				}
 				if !h.clients[client] {
-					client.receiveNotice(room.RoomName)
+					client.receiveNotice(room.RoomName, room.RoomId)
 				} else {
 					select {
 					case client.send <- message:

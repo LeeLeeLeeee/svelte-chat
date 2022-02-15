@@ -134,10 +134,10 @@ func packMessageWithUser(name string, message string) map[string]interface{} {
 	return packedMessage
 }
 
-func (c *Client) receiveNotice(roomName string) {
+func (c *Client) receiveNotice(roomName string, roomId string) {
 	message := &BroadCastMessage{
-		To:      "admin",
-		Message: []byte(JoinStrings(roomName, "에서 메시지가 도착했습니다.")),
+		To:      roomId,
+		Message: []byte(JoinStrings(roomName, "방에서 메시지가 도착했습니다.")),
 	}
 	c.send <- message
 }
