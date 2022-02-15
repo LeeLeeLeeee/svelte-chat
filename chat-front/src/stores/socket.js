@@ -32,17 +32,3 @@ export const closeSocketClient = () => {
         return { ...state }
     });
 };
-
-export const setSocketListenChatRoom = () => {
-    const { socketClient } = get(socketStore);
-    if (socketClient === null) {
-        connectSocketClient();
-        const unsubscribe = socketStore.subscribe((state) => {
-            console.log(state);
-        })
-        setTimeout(() => {
-            console.log(unsubscribe);
-            unsubscribe();
-        }, 100)
-    }
-}
