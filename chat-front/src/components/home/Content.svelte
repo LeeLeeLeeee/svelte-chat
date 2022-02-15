@@ -5,7 +5,9 @@
 	import Card from '$components/common/Card';
 	import { goto } from '$app/navigation';
 	import { socketStore } from '$stores/socket';
-	
+	import { insertToast } from '$stores/toast';
+	import { noticeRoomMessage, messageStore } from '$stores/message';
+
 	const handleCardClick = async (roomId, userName) => {
 		try {
 			await enterRoom(roomId, userName);
@@ -25,8 +27,18 @@
 		if(state.socketClient) {
 			getAbleParticipateRoomList($userStore.username);
 			getParticipatedRoomList($userStore.username);
+			$socketStore.socketClient.onListenHandler((e) => {
+				const { To: roomID, Message: message } = JSON.parse(e.data);
+				insertToast('info', message);
+				noticeRoomMessage(roomID);
+			})
 		}
 	})
+
+	messageStore.subscribe((state) => {
+		console.log(state);
+	})
+	
 </script>
 
 <div class="flex-1 flex flex-col bg-slate-50">
