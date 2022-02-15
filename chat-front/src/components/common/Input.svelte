@@ -1,8 +1,15 @@
 <script>
 	import { fade } from 'svelte/transition';
+	import { createEventDispatcher } from 'svelte';
 	export let label = '';
 	export let value = '';
 	export let error = false;
+
+	const dispatch = createEventDispatcher();
+
+	const handleKeyup = (event) => {
+		dispatch('Keyup', { event })
+	}
 </script>
 
 <div class="flex flex-col flex-1">
@@ -15,6 +22,7 @@
 		{/if}
 	</div>
 	<input
+		on:keyup={handleKeyup}
 		bind:value
 		class={`
         ease-in-out

@@ -5,13 +5,13 @@
 	import { createUserName } from '$stores/user';
 	import { setModalClose } from '$stores/modal';
 	import { insertToast } from '$stores/toast';
-	import { setSocketListenChatRoom } from '$stores/socket';
+	import { connectSocketClient } from '$stores/socket';
 	let value = '';
 	let error = false;
 	const handleSubmit = async (name) => {
 		try {
 			await createUserName(name);
-			setSocketListenChatRoom()
+			connectSocketClient()
 			setModalClose();
 			insertToast('success', '유저가 성공적으로 생성되었습니다.');
 			value = '';

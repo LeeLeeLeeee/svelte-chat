@@ -2,7 +2,7 @@
 	import { slide } from '$animations/slide';
 	import GoChevronDown from 'svelte-icons/go/GoChevronDown.svelte';
 	import { createEventDispatcher } from 'svelte';
-import { setPosition } from '$stores/context';
+	import { setPosition } from '$stores/context';
 	export let label = '';
 
 	export let list = [];

@@ -55,6 +55,12 @@
 		setModalTarget('user-list');
 		setModalOpen();
 	}
+
+	let handleKeyup = ({ detail }) => {
+		const { event } = detail;
+		if (event.key === 'Enter')
+			onSendMessage();
+	}
 	
 </script>
 
@@ -79,7 +85,7 @@
 			<GiBackup />
 		</div>
 		<div class="border-l border-l-gray-400 m-1" />
-		<Input bind:value class="flex-1" />
+		<Input on:Keyup={handleKeyup} bind:value class="flex-1" />
 		<div class="border-l border-l-gray-400 m-1" />
 		<Button on:click={onSendMessage}>전송</Button>
 	</div>
