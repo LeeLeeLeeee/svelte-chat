@@ -41,32 +41,3 @@ func (h *Hub) notifyLeave(client *Client) {
 		client.send <- message
 	}
 }
-
-func (h *Hub) run() {
-	for {
-		select {
-		case client := <-h.register:
-			h.notifyWelcome(client)
-			h.clients[client] = true
-		case client := <-h.disconnect:
-			h.notifyLeave(client)
-			if _, ok := h.clients[client]; ok {
-				h.clients[client] = false
-			}
-		case client := <-h.unregister:
-			delete(h.clients, client)
-		case message := <-h.broadcast:
-			for client := range h.clients {
-				if client.ClientName == message.To || !h.clients[client] {
-					continue
-				}
-				select {
-				case client.send <- message:
-				default:
-					close(client.send)
-					delete(h.clients, client)
-				}
-			}
-		}
-	}
-}

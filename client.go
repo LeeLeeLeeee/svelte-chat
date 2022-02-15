@@ -134,6 +134,14 @@ func packMessageWithUser(name string, message string) map[string]interface{} {
 	return packedMessage
 }
 
+func (c *Client) receiveNotice(roomName string) {
+	message := &BroadCastMessage{
+		To:      "admin",
+		Message: []byte(JoinStrings(roomName, "에서 메시지가 도착했습니다.")),
+	}
+	c.send <- message
+}
+
 func (c *Client) exitRoom(roomIndex int) bool {
 	deletedRoomList, ok := RemoveItemOfSlice(c.ParticipatedRoomIDLst, roomIndex).([]string)
 	if !ok {

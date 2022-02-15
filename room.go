@@ -42,8 +42,8 @@ func (room *Room) disconnect(client *Client) {
 }
 
 func (room *Room) checkClientIsConnected(client *Client) bool {
-	_, ok := room.hub.clients[client]
-	return ok
+	is := room.hub.clients[client]
+	return is
 }
 
 func (room *Room) checkClientIsRegisted(client *Client) (bool, int) {
@@ -63,6 +63,40 @@ func (room *Room) getParticipatedClient() []string {
 	return clientNameList
 }
 
+func (room *Room) run() {
+	h := room.hub
+	for {
+		select {
+		case client := <-h.register:
+			h.notifyWelcome(client)
+			h.clients[client] = true
+		case client := <-h.disconnect:
+			h.notifyLeave(client)
+			if _, ok := h.clients[client]; ok {
+				h.clients[client] = false
+			}
+		case client := <-h.unregister:
+			delete(h.clients, client)
+		case message := <-h.broadcast:
+			for client := range h.clients {
+				if client.ClientName == message.To {
+					continue
+				}
+				if !h.clients[client] {
+					client.receiveNotice(room.RoomName)
+				} else {
+					select {
+					case client.send <- message:
+					default:
+						close(client.send)
+						delete(h.clients, client)
+					}
+				}
+			}
+		}
+	}
+}
+
 func (roomList *RoomList) checkDuplicated(name string) bool {
 	_, err := roomList.findRoom(name)
 	return err == nil
@@ -71,8 +105,8 @@ func (roomList *RoomList) checkDuplicated(name string) bool {
 func (roomList *RoomList) createRoom(id string, name string) (*Room, error) {
 	if !roomList.checkDuplicated(name) {
 		hub := newHub()
-		go hub.run()
 		room := &Room{RoomId: id, RoomName: name, hub: hub, CountParticipant: 0}
+		go room.run()
 		roomList.insertRoom(room)
 		return room, nil
 	}
@@ -139,27 +173,3 @@ func (roomList *RoomList) getRoomListHaveNotUser(client *Client) []*Room {
 	}
 	return rooms
 }
-
-// type Room struct {
-// 	conn redis.Conn
-// 	sh   *rejson.Handler
-// }
-
-// func newRoom() (*Room, error) {
-// 	c, err := connectRedis()
-// 	rejson := createRedisJson()
-// 	rejson.SetRedigoClient(c)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	room := &Room{conn: c, sh: rejson}
-// 	return room, nil
-// }
-
-// func (r Room) setRoom(roomName string) (interface{}, error) {
-// 	return r.conn.Do("RPUSH", "ROOM", roomName)
-// }
-
-// func (r Room) getRoom() ([]string, error) {
-// 	return redis.Strings(r.conn.Do("lrange", "ROOM", 0, 10))
-// }
