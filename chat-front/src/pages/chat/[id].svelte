@@ -14,10 +14,9 @@
 	import Input from '$components/common/Input.svelte';
 	import { time } from '$stores/time';
 	import ChatBox from '$components/chat/ChatBox.svelte';
-	import { setSocketClient, socketStore } from '$stores/socket';
+	import { connectSocketClient, socketStore } from '$stores/socket';
 	import { onMount } from 'svelte';
 	import { userStore, leaveRoom } from '$stores/user';
-	import SocketClient from '$lib/socket';
 	import { goto } from '$app/navigation';
 	import { getParticipatedClient, roomStore } from '$stores/room';
 	import { setModalOpen, setModalTarget } from '$stores/modal';
@@ -26,17 +25,11 @@
 	let value = '';
 	export let roomId = ''
 	onMount(() => {
-		let sc = null
 		if ($userStore.username === "") {
 			goto("/")
 		}
-		if( $socketStore.socketClient === null ) {
-			sc = new SocketClient($userStore.username);
-			setSocketClient(sc);
-		} else {
-			sc = $socketStore.socketClient;
-		}
-		sc.onListenHandler((e) => {
+		connectSocketClient();
+		$socketStore.socketClient.onListenHandler((e) => {
 			const { To: username, Message: message} = JSON.parse(e.data)
 			if( username === 'admin') {
 				getParticipatedClient(roomId);
@@ -70,7 +63,7 @@
 		<span>{$time}</span>
 		<div on:click={handleLeaveRoom} class="icon"><GoSignOut /></div>
 	</div>
-	<div class="flex flex-col gap-3 flex-1 bg-amber-50-50 pt-2 pb-2 pl-3 pr-3 bg-zinc-100">
+	<div class="flex flex-col gap-3 flex-1 bg-amber-50-50 pt-2 pb-2 pl-3 pr-3 bg-zinc-100 overflow-y-auto">
 		{#each chats as { isMine, message, name } , i (i)}
 			{#if name === 'admin'}
 				<div class="text-sm text-center text-zinc-500">{message}</div>

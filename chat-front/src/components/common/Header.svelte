@@ -6,7 +6,7 @@
 	import Dropdown from './Dropdown.svelte';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
-	import { setSocketClient } from '$stores/socket';
+	import { connectSocketClient } from '$stores/socket';
 	import IoMdContact from 'svelte-icons/io/IoMdContact.svelte'
 	import { setContextOpen, setContextTarget, setContextProps } from '$stores/context';
 	const createUserModalOpen = () => {
@@ -28,7 +28,7 @@
 	const handleUserClick = ({ detail }) => {
 		const { props: userName } = detail;
 		setUserName(userName)
-		setSocketClient(userName)
+		connectSocketClient()
 	}
 
 	const handleContextMenu = ({ detail }) => {
