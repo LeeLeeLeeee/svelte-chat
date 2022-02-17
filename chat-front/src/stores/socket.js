@@ -15,12 +15,9 @@ const closeSocket = (socket) => {
 export const connectSocketClient = () => {
     const { socketClient } = get(socketStore);
     const { username } = get(userStore);
-    if (username !== "") {
-        socketStore.update((state) => {
-            closeSocket(socketClient)
-            const sc = new SocketClient(username);
-            return { ...state, socketClient: sc }
-        })    
+    if (username !== "" && socketClient === null) {
+        const sc = new SocketClient(username);
+        socketStore.set({socketClient: sc})
     }
 }
 

@@ -9,6 +9,10 @@
 	import { connectSocketClient } from '$stores/socket';
 	import IoMdContact from 'svelte-icons/io/IoMdContact.svelte'
 	import { setContextOpen, setContextTarget, setContextProps } from '$stores/context';
+	import { messageStore, readRoomMessage } from '$stores/message';
+
+	$: isReadAll = Object.values($messageStore).every((on) => !on);
+	console.log($messageStore)
 	const createUserModalOpen = () => {
 		setModalTarget('create-user');
 		setModalOpen();
@@ -21,6 +25,7 @@
 
 	const handleRoomClick = async ({ detail }) => {
 		const { props: roomId } = detail;
+		readRoomMessage(roomId);
 		await enterRoom(roomId, $userStore.username);
 		goto(`chat/${roomId}`);
 	};
@@ -63,12 +68,24 @@
 				{$userStore.username}님
 			</span>
 		</div>
+		{#if !isReadAll}
+			<span class="ping-dot animate-ping absolute rounded-full bg-red-500" />
+		{/if}
 		<Dropdown
 			listItemKey={{ id: 'roomId', label: 'roomName' }}
 			label="참여한 방 목록"
 			list={$roomStore.enteredRoomList}
+			class='room-dropdown'
 			on:listItemClick={handleRoomClick}
 			on:rightClick={handleContextMenu}
 		/>
 	{/if}
 </div>
+<style>
+	.ping-dot {
+		width: 7px;
+		height: 7px;
+		right: 5px;
+		top: 5px;
+	}
+</style>

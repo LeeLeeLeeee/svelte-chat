@@ -24,11 +24,20 @@
 	let chats = []
 	let value = '';
 	export let roomId = ''
+
 	onMount(() => {
-		if ($userStore.username === "") {
-			goto("/")
-		}
+		getParticipatedClient(roomId);
+	})
+
+	$: if($userStore.username ===  "") {
+		goto("/")
+	}
+
+	$: if($socketStore.socketClient === null) {
 		connectSocketClient();
+	}
+
+	$: if($socketStore.socketClient !== null) {
 		$socketStore.socketClient.onListenHandler((e) => {
 			const { To: username, Message: message} = JSON.parse(e.data)
 			if( username === 'admin') {
@@ -36,8 +45,7 @@
 			}
 			chats = [...chats, { message: message, isMine: false, name: username}]
 		})
-		getParticipatedClient(roomId);
-	})
+	}
 
 	let onSendMessage = () => {
 		chats = [...chats, { message: value, isMine: true}]

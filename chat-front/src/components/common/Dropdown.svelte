@@ -3,11 +3,14 @@
 	import GoChevronDown from 'svelte-icons/go/GoChevronDown.svelte';
 	import { createEventDispatcher } from 'svelte';
 	import { setPosition } from '$stores/context';
+import { messageStore } from '$stores/message';
 	export let label = '';
-
 	export let list = [];
+	
 	export let listItemKey = { id: '', label: '' };
 	let drowDownList;
+	let className = ''
+	export { className as class }
 
 	let isOpen = false;
 
@@ -30,20 +33,19 @@
 			isOpen = false;
 		}
 	}
+	
 </script>
 
 <svelte:window on:click={closeDropDownItem} />
 
 <div
+	
 	on:click={() => {
 		isOpen = !isOpen;
 	}}
 	bind:this={drowDownList}
-	class="relative cursor-pointer flex rounded-md items-center gap-3 border border-gray-300 pt-1 pb-1 pl-2 pr-2"
+	class="relative cursor-pointer flex rounded-md items-center gap-3 border border-gray-300 pt-1 pb-1 pl-2 pr-2 {className}"
 >
-	{#if !isOpen}
-		<!-- <span class="ping-dot animate-ping absolute rounded-full bg-red-500" /> -->
-	{/if}
 	<span class="text-sm">{label}</span>
 	<div class="icon rounded-full"><GoChevronDown /></div>
 	{#if isOpen}
@@ -54,7 +56,7 @@
 		>
 			{#if typeof list[0] === 'object'}
 				{#each list as item (item[listItemKey.id])}
-					<li on:click={() => handleClick(item[listItemKey.id])} on:contextmenu|preventDefault={(e) => handleRightClick(e, item)}>
+					<li class:active={$messageStore[item[listItemKey.id]]} on:click={() => handleClick(item[listItemKey.id])} on:contextmenu|preventDefault={(e) => handleRightClick(e, item)}>
 						{item[listItemKey.label]}
 					</li>
 				{/each}
@@ -70,16 +72,14 @@
 </div>
 
 <style>
+	.room-dropdown > ul > .active {
+		@apply bg-yellow-200;
+	}
+
 	.icon {
 		width: 20px;
 		height: 20px;
 		@apply text-slate-800;
-	}
-	.ping-dot {
-		width: 7px;
-		height: 7px;
-		right: 5px;
-		top: 5px;
 	}
 	ul {
 		left: 0px;

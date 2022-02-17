@@ -6,7 +6,7 @@
 	import { goto } from '$app/navigation';
 	import { socketStore } from '$stores/socket';
 	import { insertToast } from '$stores/toast';
-	import { noticeRoomMessage, messageStore } from '$stores/message';
+	import { noticeRoomMessage } from '$stores/message';
 
 	const handleCardClick = async (roomId, userName) => {
 		try {
@@ -23,22 +23,15 @@
 		getParticipatedRoomList($userStore.username);
 	}
 
-	socketStore.subscribe((state) => {
-		if(state.socketClient) {
-			getAbleParticipateRoomList($userStore.username);
-			getParticipatedRoomList($userStore.username);
-			$socketStore.socketClient.onListenHandler((e) => {
-				const { To: roomID, Message: message } = JSON.parse(e.data);
-				insertToast('info', message);
-				noticeRoomMessage(roomID);
-			})
-		}
-	})
+	$: if($socketStore.socketClient !== null) {
+		console.log('aaaa');
+		$socketStore.socketClient.onListenHandler((e) => {
+			const { To: roomID, Message: message } = JSON.parse(e.data);
+			insertToast('info', message);
+			noticeRoomMessage(roomID);
+		})
+	}
 
-	messageStore.subscribe((state) => {
-		console.log(state);
-	})
-	
 </script>
 
 <div class="flex-1 flex flex-col bg-slate-50">
