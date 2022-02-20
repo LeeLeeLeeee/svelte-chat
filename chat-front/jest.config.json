@@ -1,9 +1,21 @@
 {
     "transform": {
       "^.+\\.js$": "babel-jest",
-      "^.+\\.svelte$": "svelte-jester",
+      "^.+\\.svelte$": ["svelte-jester",  { "preprocess": true }],
       ".+\\.(css|styl|less|sass|scss|png|jpg|ttf|woff|woff2)$": "jest-transform-stub"
     },
+    "transformIgnorePatterns": ["<rootDir>/node_modules/(?!svelte-icons).*"],
+    "moduleNameMapper": {
+      "^\\$lib/(.*)$": "<rootDir>/src/lib/$1",
+      "^\\$components/(.*)$": "<rootDir>/src/components/$1",
+      "^\\$stores/(.*)$": "<rootDir>/src/stores/$1",
+      "^\\$animations/(.*)$": "<rootDir>/src/animations/$1",
+      "^\\$app(.*)$": [
+        "<rootDir>/.svelte-kit/runtime/app$1",
+        "<rootDir>/.svelte-kit/build/app$1"
+      ]
+    },
+    "moduleDirectories": ["node_modules"],
     "moduleFileExtensions": ["svelte", "js"],
     "testEnvironment": "jsdom",
     "setupFilesAfterEnv": ["@testing-library/jest-dom/extend-expect"]

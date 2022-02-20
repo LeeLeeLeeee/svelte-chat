@@ -3,7 +3,7 @@
 	import GoChevronDown from 'svelte-icons/go/GoChevronDown.svelte';
 	import { createEventDispatcher } from 'svelte';
 	import { setPosition } from '$stores/context';
-import { messageStore } from '$stores/message';
+	import { messageStore } from '$stores/message';
 	export let label = '';
 	export let list = [];
 	

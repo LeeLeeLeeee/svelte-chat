@@ -4,7 +4,7 @@
 	"scripts": {
 		"dev": "svelte-kit dev",
 		"build": "svelte-kit build",
-		"test": "jest src",
+		"test": "NODE_ENV=testing jest src",
 		"test:watch": "npm run test --watch",
 		"package": "svelte-kit package",
 		"preview": "svelte-kit preview",
