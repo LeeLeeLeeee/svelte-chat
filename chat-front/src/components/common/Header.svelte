@@ -12,7 +12,8 @@
 	import { messageStore, readRoomMessage } from '$stores/message';
 
 	$: isReadAll = Object.values($messageStore).every((on) => !on);
-	const createUserModalOpen = () => {
+	export const createUserModalOpen = () => {
+		console.log('aaa');
 		setModalTarget('create-user');
 		setModalOpen();
 	};
