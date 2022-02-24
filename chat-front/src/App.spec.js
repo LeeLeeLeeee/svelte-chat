@@ -1,7 +1,7 @@
-import { render, screen, cleanup } from '@testing-library/svelte';
-import { fireEvent } from '@testing-library/svelte/node_modules/@testing-library/dom';
+import { render, screen, cleanup, fireEvent } from '@testing-library/svelte';
 import App from './pages';
 import Header from './components/common/Header';
+import Button from './components/common/Button';
 import CreateUserModal from './components/home/modals/CreateUserModal';
 import { setModalClose, setModalOpen, setModalTarget } from './stores/modal';
 import axios from 'axios';
@@ -63,12 +63,27 @@ describe("case-2 render create user modal", () => {
 
 describe("case-3 render Header before create user", () => {
     test("case-3-1 click create user button", async () => {
-        const { getByText, component } = render(Header);
-        const handleClick = jest.fn(() => console.log('bbb'));
-        const createButton = getByText("계정 생성");
-        createButton.click = handleClick;
-        console.log(createButton.click());
+        render(Header);
+        const createButton = screen.getByText("계정 생성");
         await fireEvent.click(createButton);
-        // expect(handleClick).toBeCalledTimes(1);
+    })
+})
+
+describe("case-4 check button", () => {
+    test("case-4-1 button rendered", () => {
+        const { component, getByTestId } = render(Button);
+        expect(getByTestId("button")).not.toBeNull();
+    })
+
+    test("case-4-2 button click", () => {
+        const { component, getByTestId } = render(Button);
+        const handleClick = jest.fn();
+        component.$on('click', handleClick);
+        fireEvent.click(getByTestId("button"))
+        expect(handleClick).toBeCalledTimes(1)
+    })
+
+    afterEach(() => {
+        cleanup()
     })
 })

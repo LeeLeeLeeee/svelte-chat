@@ -6,7 +6,7 @@
 		isMain ? 'bg-slate-600 text-white' : 'border-2 border-slate-600';
 </script>
 
-<button on:click|preventDefault class="pt-1 pb-1 p-2 text-sm rounded-md {checkIsMain(main)} ">
+<button data-testid="button" on:click|preventDefault class="pt-1 pb-1 p-2 text-sm rounded-md {checkIsMain(main)} ">
 	<slot />
 </button>
 
