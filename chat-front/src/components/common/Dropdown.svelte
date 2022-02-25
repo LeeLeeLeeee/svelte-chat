@@ -39,7 +39,7 @@
 <svelte:window on:click={closeDropDownItem} />
 
 <div
-	
+	data-testid="dropdown"
 	on:click={() => {
 		isOpen = !isOpen;
 	}}
@@ -50,6 +50,7 @@
 	<div class="icon rounded-full"><GoChevronDown /></div>
 	{#if isOpen}
 		<ul
+			data-testid="dropdown-list"
 			in:slide={{ duration: 100 }}
 			out:slide={{ duration: 100 }}
 			class="drop-down-list absolute text-xs drop-shadow-md bg-white p-2 rounded-md border border-gray-300"

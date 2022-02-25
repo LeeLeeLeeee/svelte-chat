@@ -2,6 +2,7 @@ import { render, screen, cleanup, fireEvent } from '@testing-library/svelte';
 import App from './pages';
 import Header from './components/common/Header';
 import Button from './components/common/Button';
+import Dropdown from './components/common/Dropdown';
 import CreateUserModal from './components/home/modals/CreateUserModal';
 import { setModalClose, setModalOpen, setModalTarget } from './stores/modal';
 import axios from 'axios';
@@ -71,7 +72,7 @@ describe("case-3 render Header before create user", () => {
 
 describe("case-4 check button", () => {
     test("case-4-1 button rendered", () => {
-        const { component, getByTestId } = render(Button);
+        const { getByTestId } = render(Button);
         expect(getByTestId("button")).not.toBeNull();
     })
 
@@ -85,5 +86,13 @@ describe("case-4 check button", () => {
 
     afterEach(() => {
         cleanup()
+    })
+})
+
+describe("case-5 dropdown render", () => {
+    test("case-5-1 dropdown", async () => {
+        const { getByTestId } = render(Dropdown);
+        await fireEvent.click(getByTestId("dropdown"))
+        expect(getByTestId("dropdown-list")).not.toBeNull();
     })
 })
