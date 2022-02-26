@@ -3,8 +3,10 @@ import App from './pages';
 import Header from './components/common/Header';
 import Button from './components/common/Button';
 import Dropdown from './components/common/Dropdown';
+import Card from './components/common/Card';
 import CreateUserModal from './components/home/modals/CreateUserModal';
 import { setModalClose, setModalOpen, setModalTarget } from './stores/modal';
+import { createUserName } from './stores/user';
 import axios from 'axios';
 
 jest.mock('axios');
@@ -24,9 +26,6 @@ describe("case-1 home render", () => {
         const dropdown = screen.queryByText("생성된 유저 목록");
         expect(dropdown).not.toBeNull();
     });
-    afterEach(() => {
-        cleanup()
-    })
 });
 
 describe("case-2 render create user modal", () => {
@@ -56,17 +55,26 @@ describe("case-2 render create user modal", () => {
     afterAll(() => {
         setModalClose();
     })
-
-    afterEach(() => {
-        cleanup()
-    })
 });
 
-describe("case-3 render Header before create user", () => {
+describe("case-3 render Header", () => {
+    beforeAll(() => {
+        const response = { status: 201, data: { data: '' }};
+        axios.post.mockResolvedValue(response);
+    })
+
     test("case-3-1 click create user button", async () => {
         render(Header);
-        const createButton = screen.getByText("계정 생성");
-        await fireEvent.click(createButton);
+        screen.getByText("계정 생성");
+        screen.getByText("생성된 유저 목록");
+    })
+
+    test("case-3-2 after user's created", async () => {
+        render(Header);
+        await createUserName('YHLEE');
+        screen.getByText("방 생성");
+        screen.getByText('YHLEE님');
+        screen.getByText('참여한 방 목록');
     })
 })
 
@@ -83,16 +91,49 @@ describe("case-4 check button", () => {
         fireEvent.click(getByTestId("button"))
         expect(handleClick).toBeCalledTimes(1)
     })
-
-    afterEach(() => {
-        cleanup()
-    })
 })
 
 describe("case-5 dropdown render", () => {
-    test("case-5-1 dropdown", async () => {
+    const listItemKey = {id: 'id', label: 'name'};
+    const list = [
+        {id: 1, name: 'test1'},
+        {id: 2, name: 'test2'},
+    ];
+
+    test("case-5-1 dropdown open", async () => {
         const { getByTestId } = render(Dropdown);
         await fireEvent.click(getByTestId("dropdown"))
-        expect(getByTestId("dropdown-list")).not.toBeNull();
+        const dropdownElement = getByTestId("dropdown-list");
+        expect(dropdownElement).not.toBeNull();
+        expect(dropdownElement.childElementCount).toEqual(0)
+    })
+
+    test("case-5-2 dropdown open with list ", async () => {
+        const { getByTestId } = render(Dropdown, { listItemKey, list });
+        await fireEvent.click(getByTestId("dropdown"))
+        const dropdownElement = getByTestId("dropdown-list");
+        expect(dropdownElement.childElementCount).toEqual(2)
+    })
+
+    test("case5-3 dropdown list item check", async () => {
+        const { getByTestId } = render(Dropdown, { listItemKey, list });
+        await fireEvent.click(getByTestId("dropdown"));
+        const dropdownElement = getByTestId("dropdown-list");
+        expect(dropdownElement).toHaveTextContent("test1");
+        expect(dropdownElement).toHaveTextContent("test2");
+    })
+
+    test("case-5-4 dropdown with label", async () => {
+        const { getByTestId } = render(Dropdown, { label: 'test', listItemKey, list });
+        const dropdown = getByTestId("dropdown");
+        expect(dropdown).toHaveTextContent("test");
+        expect(dropdown.querySelector('ul')).toBeNull();
     })
 })
+
+describe("case-6 Card render", () => {
+    test("case-6-1 card rendered", () => {
+        const { getByText } = render(Card, { title: 'test' })
+        getByText('test')
+    })
+});
