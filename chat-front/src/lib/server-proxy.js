@@ -21,7 +21,7 @@ class ServerProxy {
             }
             return data;
         } catch (error) {
-            throw new Error(error);
+            throw new Error(error.message);
         }
     }
 
@@ -33,7 +33,7 @@ class ServerProxy {
             } 
             return data
         } catch (error) {
-            throw new Error(error);
+            throw new Error(error.message);
         }
     }
 
@@ -45,7 +45,7 @@ class ServerProxy {
             }
             return data;    
         } catch(error) {
-            throw new Error(error)
+            throw new Error(error.message)
         }
     }
 
@@ -59,7 +59,7 @@ class ServerProxy {
                 throw new Error(data.msg)
             }
         } catch(error) {
-            throw new Error(error)
+            throw new Error(error.message)
         }
     }
 
@@ -73,7 +73,7 @@ class ServerProxy {
                 throw new Error(data.msg);
             }
         } catch(error) {
-            throw new Error(error);
+            throw new Error(error.message);
         }
     }
 
@@ -84,7 +84,7 @@ class ServerProxy {
                 throw new Error(data.msg)
             }
         } catch (error) {
-            throw new Error(error)
+            throw new Error(error.message)
         }
     }
 
@@ -96,7 +96,7 @@ class ServerProxy {
             }
             return data;
         } catch (error) {
-            throw new Error(error)
+            throw new Error(error.message)
         }
     }
 
@@ -108,7 +108,7 @@ class ServerProxy {
             }
             return data;
         } catch (error) {
-            throw new Error(error);
+            throw new Error(error.message);
         }
     }
 }
