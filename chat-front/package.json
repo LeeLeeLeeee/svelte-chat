@@ -5,6 +5,7 @@
 		"dev": "svelte-kit dev",
 		"build": "svelte-kit build",
 		"test": "NODE_ENV=testing jest src",
+		"test:coverage": "NODE_ENV=testing jest src --coverage",
 		"test:watch": "npm run test --watch",
 		"package": "svelte-kit package",
 		"preview": "svelte-kit preview",
