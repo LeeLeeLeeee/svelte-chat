@@ -33,6 +33,10 @@
 			isOpen = false;
 		}
 	}
+
+	function handleDropdownVisible() {
+		isOpen = !isOpen;
+	}
 	
 </script>
 
@@ -40,9 +44,7 @@
 
 <div
 	data-testid="dropdown"
-	on:click={() => {
-		isOpen = !isOpen;
-	}}
+	on:click={handleDropdownVisible}
 	bind:this={drowDownList}
 	class="relative cursor-pointer flex rounded-md items-center gap-3 border border-gray-300 pt-1 pb-1 pl-2 pr-2 {className}"
 >
