@@ -1,5 +1,7 @@
+import { url } from '$app/stores';
 import axios from 'axios';
 import serverProxy from './lib/server-proxy';
+import SocketClient from './lib/socket';
 
 jest.mock('axios');
 
@@ -135,5 +137,43 @@ describe("ServerProxy method Test", () => {
 })
 
 describe("Socket Instance Test", () => {
-    it("")
+    const userName = 'YHLEE';
+    beforeAll(() => {
+        window.WebSocket = function WebSocket(url) {
+            this.url = url;
+            this.send = () => 'need connect mock';
+            this.close = () => 'need connect mock';
+            return this;
+        }
+    })
+
+    it("websocket create test", () => {
+        const yhleeSocket = new SocketClient(userName);
+        expect(yhleeSocket.socket.url).toEqual(`ws://localhost:3001/ws/client?name=${userName}`);
+    })
+
+    it("websocket onListenHandler test", () => {
+        const yhleeSocket = new SocketClient(userName);
+        const mockListenHandler = jest.fn();
+        yhleeSocket.onListenHandler(mockListenHandler);
+        yhleeSocket.socket.onmessage();
+        expect(mockListenHandler).toBeCalledTimes(1);
+    })
+
+    it("websocket send test", () => {
+        const yhleeSocket = new SocketClient(userName);
+        const mockFunction = jest.fn();
+        yhleeSocket.socket.send = mockFunction;
+        yhleeSocket.sendMessage('');
+        expect(mockFunction).toBeCalledTimes(1);
+    })
+
+    it("websocket close test", () => {
+        const yhleeSocket = new SocketClient(userName);
+        const mockFunction = jest.fn();
+        yhleeSocket.socket.close = mockFunction;
+        yhleeSocket.close();
+        expect(mockFunction).toBeCalledTimes(1);
+    })
+
 })
