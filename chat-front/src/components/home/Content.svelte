@@ -24,7 +24,6 @@
 	}
 
 	$: if($socketStore.socketClient !== null) {
-		console.log('aaaa');
 		$socketStore.socketClient.onListenHandler((e) => {
 			const { To: roomID, Message: message } = JSON.parse(e.data);
 			insertToast('info', message);

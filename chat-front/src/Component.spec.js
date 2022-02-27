@@ -4,10 +4,13 @@ import Header from './components/common/Header';
 import Button from './components/common/Button';
 import Dropdown from './components/common/Dropdown';
 import Card from './components/common/Card';
+import Content from '$components/home/Content'
+import Chat from './pages/chat/[id]';
 import CreateUserModal from './components/home/modals/CreateUserModal';
 import { setModalClose, setModalOpen, setModalTarget } from './stores/modal';
-import { createUserName } from './stores/user';
+import { createUserName, userStore } from './stores/user';
 import axios from 'axios';
+import { getRoomList } from '$stores/room';
 
 jest.mock('axios');
 describe("case-1 home render", () => {
@@ -76,6 +79,13 @@ describe("case-3 render Header", () => {
         screen.getByText('YHLEE님');
         screen.getByText('참여한 방 목록');
     })
+
+    afterAll(() => {
+        userStore.set({
+            username: '',
+            userNameList: [],
+        })
+    })
 })
 
 describe("case-4 check button", () => {
@@ -137,3 +147,36 @@ describe("case-6 Card render", () => {
         getByText('test')
     })
 });
+
+describe("case-7 Content render", () => {
+    const roomName = 'TEST_ROOM';
+    const roomID = '1';
+    const userName = 'YHLEE';
+
+    beforeAll(() => {
+        const response = { status: 201, data: { data: '' }};
+        axios.post.mockResolvedValue(response);
+    })
+
+    test("case-7-1 before create user", async () => {
+        render(Content);
+        screen.getByText("계정을 생성해주세요");
+    })
+
+    test("case-3-2 after create user", async () => {
+        render(Content);
+        await createUserName('YHLEE');
+        screen.getByText("참여 가능한 방 목록");
+    })
+
+    test("case-3-3 after create room", async () => {
+        render(Content);
+        const getResponse = { status: 200, data: { data: [
+            { id: roomID, name: roomName, countParticipant: 0 },
+        ] }};
+        axios.get.mockResolvedValue(getResponse);
+        await getRoomList()
+        screen.getByText(roomName);
+    })
+
+})
