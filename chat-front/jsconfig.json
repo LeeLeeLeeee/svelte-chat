@@ -7,7 +7,10 @@
 			"$components/*": ["src/components/*"],
 			"$stores/*": ["src/stores/*"],
 			"$animations/*": ["src/animations/*"]
-		}
+		},
+		"types": ["cypress", "@testing-library/cypres"],
+		"module": "ESNext",
+		"target": "ESNext",
 	},
 	"include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.svelte"]
 }
