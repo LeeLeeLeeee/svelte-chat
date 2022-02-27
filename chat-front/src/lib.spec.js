@@ -1,4 +1,3 @@
-import { url } from '$app/stores';
 import axios from 'axios';
 import serverProxy from './lib/server-proxy';
 import SocketClient from './lib/socket';
