@@ -1,38 +1,27 @@
-# create-svelte
+## SVELTE-CHAT-FRONT
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte);
-
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
-
+#### scripting
 ```bash
-# create a new project in the current directory
-npm init svelte@next
-
-# create a new project in my-app
-npm init svelte@next my-app
+    # run
+    npm run dev
+    # test
+    npm run test
+    # test with coverage
+    npm run test:coverage
+    # lint
+    npm run lint
 ```
 
-> Note: the `@next` is temporary
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-Before creating a production version of your app, install an [adapter](https://kit.svelte.dev/docs#adapters) for your target environment. Then:
-
-```bash
-npm run build
-```
-
-> You can preview the built app with `npm run preview`, regardless of whether you installed an adapter. This should _not_ be used to serve your app in production.
+#### folder
+- animations
+    - svelte 내부 애니메이션 함수 분리
+- components
+    - 각 page별 혼합 컴포넌트, 공용 컴포넌트
+- e2eTest
+    - cypress 테스트 파일
+- lib
+    - 사용자 함수 정의 ( api 통신용 server-proxy, 소켓 연동 지원 객체 socket)
+- pages
+    - 라우트 폴더
+- stores
+    - svelte에서 사용하는 공용 variable
