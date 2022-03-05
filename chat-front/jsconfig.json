@@ -8,9 +8,9 @@
 			"$stores/*": ["src/stores/*"],
 			"$animations/*": ["src/animations/*"]
 		},
-		"types": ["cypress", "@testing-library/cypres"],
+		"types": ["cypress", "@testing-library/cypress"],
 		"module": "ESNext",
 		"target": "ESNext",
 	},
-	"include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.svelte"]
+	"include": ["src/**/*.d.ts", "src/**/*.js", "src/**/*.svelte"],
 }

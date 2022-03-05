@@ -1,5 +1,9 @@
-describe("cypress test", () => {
-    it("test 1", () => {
-        expect(3).to.equal(3)
+import App from 'app.html';
+// import { mount } from 'cypress-svelte-unit-test';
+
+
+describe("App Test", () => {
+    it("App Render", () => {
+        console.log(App);
     })
 })
