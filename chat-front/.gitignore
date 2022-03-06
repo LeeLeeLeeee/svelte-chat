@@ -9,3 +9,4 @@ node_modules
 /coverage
 /cypress/fixtures
 /cypress/screenshots
+/cypress/videos
