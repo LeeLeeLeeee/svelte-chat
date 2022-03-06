@@ -196,3 +196,17 @@ func (cli *ClientList) getClientNotAssignedUserName() []string {
 	}
 	return clientNameList
 }
+
+func (cli *ClientList) delete(userName string) error {
+	index := FindIndex(cli.list, func(value interface{}) bool {
+		return userName == value.(*Client).ClientName
+	})
+
+	if index == -1 {
+		return errors.New("user not found")
+	}
+
+	clientList := RemoveItemOfSlice(cli.list, index).([]*Client)
+	cli.list = clientList
+	return nil
+}

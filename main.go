@@ -48,6 +48,7 @@ func main() {
 	r.PATCH("/api/user/exit", exitRoom)
 	r.POST("/api/user/create", createUser)
 	r.GET("/api/user", getUser)
+	r.DELETE("/api/user", deleteUser)
 	server := &http.Server{
 		Handler:      r,
 		ReadTimeout:  10 * time.Second,
@@ -277,6 +278,35 @@ func exitRoom(c echo.Context) error {
 
 	if ok, roomIndex := room.checkClientIsRegisted(user); ok {
 		user.exitRoom(roomIndex)
+	}
+
+	return c.JSON(http.StatusOK, responseFormat{
+		StatusCode: http.StatusOK,
+		Message:    "ok",
+	})
+}
+
+func deleteUser(c echo.Context) error {
+	u := new(userParam)
+	if err := c.Bind(u); err != nil {
+		return c.JSON(http.StatusInternalServerError, responseFormat{
+			StatusCode: http.StatusInternalServerError,
+			Message:    "Failed to bind",
+		})
+	}
+
+	if u.Name == "" {
+		return c.JSON(http.StatusBadRequest, responseFormat{
+			StatusCode: http.StatusBadRequest,
+			Message:    "name must have a value.",
+		})
+	}
+
+	if err := clientList.delete(u.Name); err != nil {
+		return c.JSON(http.StatusBadRequest, responseFormat{
+			StatusCode: http.StatusBadRequest,
+			Message:    "Fail to delete user.",
+		})
 	}
 
 	return c.JSON(http.StatusOK, responseFormat{
