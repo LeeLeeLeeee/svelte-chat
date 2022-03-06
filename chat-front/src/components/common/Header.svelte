@@ -50,7 +50,7 @@
 
 <div class="p-2 shadow-sm z-10 relative flex justify-between">
 	{#if $userStore.username === ''}
-		<Button on:click={createUserModalOpen} main>계정 생성</Button>
+		<Button dataCy='createUserModalOpen' on:click={createUserModalOpen} main>계정 생성</Button>
 		<Dropdown
 			label="생성된 유저 목록"
 			list={$userStore.userNameList}
@@ -58,7 +58,7 @@
 		/>
 
 	{:else}
-		<Button on:click={createRoomModalOpen}>방 생성</Button>
+		<Button dataCy='createRoomModalOpen' on:click={createRoomModalOpen}>방 생성</Button>
 		<div class="flex items-center">
 			<div class="icon">
 				<IoMdContact />

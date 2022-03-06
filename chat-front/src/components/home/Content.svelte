@@ -37,10 +37,10 @@
 	{#if $userStore.username === ''}
 		<div class="flex-1 flex items-center justify-center font-bold">계정을 생성해주세요</div>
 	{:else}
-		<div class="m-1 flex items-center">참여 가능한 방 목록 <div class="icon ml-1" on:click={handleReloadClick}><TiRefresh /></div> </div>
-		<div class="flex-1 p-2 grid grid-cols-2 gap-4 justify-items-center auto-rows-max">
+		<div class="m-1 flex items-center">참여 가능한 방 목록 <div data-cy="roomListRefresh" class="icon ml-1" on:click={handleReloadClick}><TiRefresh /></div> </div>
+		<div data-cy="roomList" class="flex-1 p-2 grid grid-cols-2 gap-4 justify-items-center auto-rows-max">
 			{#each $roomStore.roomList as { roomName, userCount, roomId }, i (roomId)}
-				<Card on:click={() => handleCardClick(roomId, $userStore.username)} title={roomName}>
+				<Card dataCy={roomName} on:click={() => handleCardClick(roomId, $userStore.username)} title={roomName}>
 					<div slot="content" class="w-full text-right text-sm text-slate-500">
 						참여 인원: {userCount}
 					</div>

@@ -1,9 +1,11 @@
 <script>
 	export let title = '';
+    export let dataCy = '';
 	import { slide } from '$animations/slide';
 </script>
 
 <div
+    data-cy='{dataCy}'
 	on:click
 	in:slide
 	out:slide

@@ -26,6 +26,6 @@
 	<div slot="header">계정 생성</div>
 	<Input {error} bind:value label="이름" />
 	<div slot="bottom">
-		<Button on:click={() => handleSubmit(value)}>생성</Button>
+		<Button dataCy='createUserButton' on:click={() => handleSubmit(value)}>생성</Button>
 	</div>
 </Modal>

@@ -16,6 +16,7 @@
 {#if isModal}
 	<div
 		id="container"
+		data-cy="{modalId}"
 		in:fade
 		out:fade={{ duration: 150 }}
 		class="absolute border1 z-20 border-slate-700 shadow-md bg-white p-2 rounded-md flex"
