@@ -1,6 +1,8 @@
 {
     "componentFolder": "src",
-    "testFiles": "e2eTest/*spec.js",
-    "pluginsFile": "cypress/plugins/index.cjs",
-    "video": false
+    "testFiles": "*spec.js",
+    "integrationFolder": "src/e2eTest/",
+    "baseUrl": "http://localhost:19123",
+    "screenshotOnRunFailure": false,
+    "pluginsFile": false
 }

@@ -8,8 +8,8 @@
 		"test:coverage": "NODE_ENV=testing jest src --coverage",
 		"test:watch": "npm run test --watch",
 		"package": "svelte-kit package",
-		"cy:open-ct": "cypress open-ct",
-		"cy:run-ct": "cypress run-ct",
+		"cy:open": "cypress open",
+		"cy:run": "cypress run",
 		"preview": "svelte-kit preview",
 		"lint": "prettier --ignore-path .gitignore --check --plugin-search-dir=. . && eslint --ignore-path .gitignore .",
 		"format": "prettier --ignore-path .gitignore --write --plugin-search-dir=. ."
