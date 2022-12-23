@@ -28,15 +28,6 @@ https://user-images.githubusercontent.com/29810342/209348588-80a2f406-ef41-48e7-
 - echo (서버 구축)
 - gorilla/websocket (소켓 통신)
 
-#### devops
-- docker
-- docker-compose
-- traefik
-
-#### test
-- jest
-- cypress
-
 #### design
 - tailwind css
 
