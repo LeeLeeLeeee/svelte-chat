@@ -4,6 +4,12 @@
 svelte로 구축한 프론트 환경과 go + echo로 구축한 API 서버간의 websocket 통신
 Hub 객체를 활용하여 채팅방 토이 프로젝트 구축.
 
+#### Preview
+
+
+https://user-images.githubusercontent.com/29810342/209348588-80a2f406-ef41-48e7-80f4-99e22f5fb482.mov
+
+
 
 ### 실행 CLI
 ```bash
@@ -56,9 +62,5 @@ Hub 객체를 활용하여 채팅방 토이 프로젝트 구축.
 ├── room.go # 룸 서비스 객체
 ├── lib.go # 공통 함수 모듈
 ```
-#### Preview
-
-
-https://user-images.githubusercontent.com/29810342/209348588-80a2f406-ef41-48e7-80f4-99e22f5fb482.mov
 
 
